@@ -1,5 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_litera/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/login_usecase.dart';
