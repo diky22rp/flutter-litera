@@ -10,6 +10,7 @@ import 'package:flutter_litera/features/hub/data/datasources/hub_remote_data_sou
 import 'package:flutter_litera/features/hub/data/repositories/hub_repository_impl.dart';
 import 'package:flutter_litera/features/hub/domain/repositories/hub_repository.dart';
 import 'package:flutter_litera/features/hub/domain/usecases/get_all_hubs_usecase.dart';
+import 'package:flutter_litera/features/hub/presentation/bloc/hub_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -60,4 +61,6 @@ Future<void> init() async {
   sl.registerLazySingleton<HubRemoteDataSource>(
     () => HubRemoteDataSourceImpl(firestore: sl()),
   );
+
+  sl.registerFactory(() => HubBloc(getAllHubsUseCase: sl()));
 }

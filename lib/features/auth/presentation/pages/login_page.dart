@@ -5,6 +5,7 @@ import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/core/utils/app_validator.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_litera/features/auth/presentation/pages/register_page.dart';
+import 'package:flutter_litera/features/hub/presentation/pages/hub_selection_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,7 +27,10 @@ class _LoginPageState extends State<LoginPage> {
           if (state is AuthError) {
             AppSnackbar.showError(context, state.message);
           } else if (state is AuthAuthenticated) {
-            // Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const HubSelectionPage()),
+            );
             AppSnackbar.showSuccess(context, "Berhasil masuk! Selamat datang.");
           }
         },
