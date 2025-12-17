@@ -5,6 +5,7 @@ import 'package:flutter_litera/features/auth/data/repositories/auth_repository_i
 import 'package:flutter_litera/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/login_usecase.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/register_usecase.dart';
+import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -14,7 +15,7 @@ Future<void> init() async {
 
   //Core
 
-  //Features - Auth
+  //==Features - Auth
   // Usecase
   sl.registerLazySingleton(() => LoginUseCase(sl()));
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
@@ -29,7 +30,16 @@ Future<void> init() async {
     () => AuthRemoteDataSourceImpl(firebaseAuth: sl(), firestore: sl()),
   );
 
-  // External (Firebase)
+  // Bloc
+  sl.registerFactory(
+    () => AuthBloc(
+      loginUseCase: sl(),
+      registerUseCase: sl(),
+      authRepository: sl(),
+    ),
+  );
+
+  //== External (Firebase)
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
 }
