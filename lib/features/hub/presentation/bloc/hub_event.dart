@@ -8,3 +8,8 @@ sealed class HubEvent extends Equatable {
 }
 
 class FetchAllHubs extends HubEvent {}
+
+class SelectHub extends HubEvent {
+  final String hubId;
+  const SelectHub(this.hubId);
+}

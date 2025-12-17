@@ -6,4 +6,8 @@ abstract class HubRepository {
   Future<Either<Failure, List<HubEntity>>> getAllHubs();
 
   Future<Either<Failure, HubEntity>> getHubById(String id);
+
+  Future<Either<Failure, void>> cacheHubID(String hubId);
+
+  Future<Either<Failure, String?>> getSavedHubID();
 }

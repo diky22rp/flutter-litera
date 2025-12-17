@@ -26,3 +26,5 @@ class HubError extends HubState {
   @override
   List<Object> get props => [message];
 }
+
+class HubSelectedSuccess extends HubState {}
