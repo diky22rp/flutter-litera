@@ -19,7 +19,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = await remoteDataSource.login(email, password);
       return Right(user);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      final errorMessage = FirebaseErrorHandler.getMessage(e);
+      return Left(ServerFailure(errorMessage));
     }
   }
 
@@ -33,7 +34,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = await remoteDataSource.register(name, email, password);
       return Right(user);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      final errorMessage = FirebaseErrorHandler.getMessage(e);
+      return Left(ServerFailure(errorMessage));
     }
   }
 

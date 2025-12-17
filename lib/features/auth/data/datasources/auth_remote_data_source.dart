@@ -20,48 +20,40 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel> login(String email, String password) async {
-    try {
-      UserCredential result = await firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+    UserCredential result = await firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      DocumentSnapshot doc = await firestore
-          .collection('users')
-          .doc(result.user!.uid)
-          .get();
+    DocumentSnapshot doc = await firestore
+        .collection('users')
+        .doc(result.user!.uid)
+        .get();
 
-      if (!doc.exists) {
-        throw Exception("User data not found in database");
-      }
-
-      return UserModel.fromMap(doc.data() as Map<String, dynamic>);
-    } catch (e) {
-      throw Exception(e.toString());
+    if (!doc.exists) {
+      throw Exception("User data not found in database");
     }
+
+    return UserModel.fromMap(doc.data() as Map<String, dynamic>);
   }
 
   @override
   Future<UserModel> register(String name, String email, String password) async {
-    try {
-      UserCredential result = await firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+    UserCredential result = await firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      UserModel newUser = UserModel(
-        uid: result.user!.uid,
-        email: email,
-        name: name,
-        balance: 0,
-      );
+    UserModel newUser = UserModel(
+      uid: result.user!.uid,
+      email: email,
+      name: name,
+      balance: 0,
+    );
 
-      await firestore.collection('users').doc(newUser.uid).set(newUser.toMap());
+    await firestore.collection('users').doc(newUser.uid).set(newUser.toMap());
 
-      return newUser;
-    } catch (e) {
-      throw Exception(e.toString());
-    }
+    return newUser;
   }
 
   @override
