@@ -30,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 backgroundColor: AppColors.error,
               ),
             );
-          } else if (state is AuthAuthenticated) {
+          } else if (state is AuthRegistered) {
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(

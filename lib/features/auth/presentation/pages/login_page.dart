@@ -30,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           } else if (state is AuthAuthenticated) {
+            // Navigator.pushReplacementNamed(context, '/home');
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text("Login Berhasil!"),
@@ -85,8 +86,9 @@ class _LoginPageState extends State<LoginPage> {
                         prefixIcon: Icon(Icons.lock_outline),
                       ),
                       validator: (val) {
-                        if (val == null || val.isEmpty)
+                        if (val == null || val.isEmpty) {
                           return "Password wajib diisi";
+                        }
                         return null;
                       },
                     ),
