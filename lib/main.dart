@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:flutter_litera/features/auth/presentation/pages/login_page.dart';
+import 'package:flutter_litera/features/auth/presentation/pages/splash_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart' as di;
@@ -52,7 +52,7 @@ class LiteraApp extends StatelessWidget {
 
           useMaterial3: true,
         ),
-        home: const LoginPage(),
+        home: const SplashPage(),
       ),
     );
   }

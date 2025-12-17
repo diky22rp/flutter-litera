@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
+import 'package:flutter_litera/features/home/presentation/pages/dummy_home_page.dart';
 import 'package:flutter_litera/features/hub/presentation/bloc/hub_bloc.dart';
 import 'package:flutter_litera/injection_container.dart';
 
@@ -35,8 +36,12 @@ class HubSelectionPage extends StatelessWidget {
                 child: BlocConsumer<HubBloc, HubState>(
                   listener: (context, state) {
                     if (state is HubSelectedSuccess) {
-                      // NAVIGASI KE HOME
-                      // Navigator.pushReplacementNamed(context, '/home');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const DummyHomePage(),
+                        ),
+                      );
 
                       AppSnackbar.showSuccess(
                         context,
@@ -68,9 +73,7 @@ class HubSelectionPage extends StatelessWidget {
                               return InkWell(
                                 onTap: () {
                                   //event select hub
-                                  context.read<HubBloc>().add(
-                                    SelectHub(hub.id),
-                                  );
+                                  context.read<HubBloc>().add(SelectHub(hub));
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(20),

@@ -26,7 +26,7 @@ class HubBloc extends Bloc<HubEvent, HubState> {
     });
 
     on<SelectHub>((event, emit) async {
-      final result = await cacheHubIdUseCase(event.hubId);
+      final result = await cacheHubIdUseCase(event.hub);
       result.fold(
         (failure) => emit(HubError(failure.message)),
         (_) => emit(HubSelectedSuccess()),

@@ -27,17 +27,12 @@ class HubRepositoryImpl implements HubRepository {
   }
 
   @override
-  Future<Either<Failure, HubEntity>> getHubById(String id) async {
-    return const Left(ServerFailure("Fitur belum tersedia"));
-  }
-
-  @override
-  Future<Either<Failure, void>> cacheHubID(String hubId) async {
+  Future<Either<Failure, void>> cacheHub(HubEntity hub) async {
     try {
-      await localDataSource.cacheSelectedHubId(hubId);
+      await localDataSource.cacheHubData(hub.id, hub.name);
       return const Right(null);
     } catch (e) {
-      return const Left(CacheFailure("Gagal menyimpan lokasi"));
+      return const Left(CacheFailure("Gagal menyimpan data lokasi"));
     }
   }
 
@@ -47,7 +42,17 @@ class HubRepositoryImpl implements HubRepository {
       final id = await localDataSource.getCachedHubId();
       return Right(id);
     } catch (e) {
-      return const Left(CacheFailure("Gagal mengambil lokasi tersimpan"));
+      return const Left(CacheFailure("Gagal mengambil ID lokasi"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String?>> getSavedHubName() async {
+    try {
+      final name = await localDataSource.getCachedHubName();
+      return Right(name);
+    } catch (e) {
+      return const Left(CacheFailure("Gagal mengambil nama lokasi"));
     }
   }
 }
