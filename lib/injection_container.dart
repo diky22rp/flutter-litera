@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_litera/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:flutter_litera/features/auth/data/repositories/auth_repository_impl.dart';
@@ -6,6 +7,11 @@ import 'package:flutter_litera/features/auth/domain/repositories/auth_repository
 import 'package:flutter_litera/features/auth/domain/usecases/login_usecase.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/register_usecase.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:flutter_litera/features/home/data/datasources/home_remote_data_source.dart';
+import 'package:flutter_litera/features/home/data/repositories/book_repository_impl.dart';
+import 'package:flutter_litera/features/home/domain/repositories/book_repository.dart';
+import 'package:flutter_litera/features/home/domain/usecases/get_books_usecase.dart';
+import 'package:flutter_litera/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter_litera/features/hub/data/datasources/hub_local_data_source.dart';
 import 'package:flutter_litera/features/hub/data/datasources/hub_remote_data_source.dart';
 import 'package:flutter_litera/features/hub/data/repositories/hub_repository_impl.dart';
@@ -47,11 +53,12 @@ Future<void> init() async {
     ),
   );
 
-  //== External (Firebase, SharedPreferences)
+  //== External (Firebase, SharedPreferences, Dio)
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
+  sl.registerLazySingleton(() => Dio());
 
   //== Features - Hub Selection
   // Usecase
@@ -73,5 +80,22 @@ Future<void> init() async {
 
   sl.registerFactory(
     () => HubBloc(getAllHubsUseCase: sl(), cacheHubIdUseCase: sl()),
+  );
+
+  //==Features - Home
+  // Bloc
+  sl.registerFactory(() => HomeBloc(getBooksUseCase: sl()));
+
+  // UseCase
+  sl.registerLazySingleton(() => GetBooksUseCase(sl()));
+
+  // Repository
+  sl.registerLazySingleton<BookRepository>(
+    () => BookRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  // Data Source
+  sl.registerLazySingleton<HomeRemoteDataSource>(
+    () => HomeRemoteDataSourceImpl(dio: sl()),
   );
 }
