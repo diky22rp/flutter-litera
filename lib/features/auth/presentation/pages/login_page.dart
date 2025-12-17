@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/utils/app_validator.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_litera/features/auth/presentation/pages/register_page.dart';
 
@@ -71,8 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
-                      validator: (value) =>
-                          value!.isEmpty ? "Email tidak boleh kosong" : null,
+                      validator: AppValidator.validateEmail,
                     ),
                     const SizedBox(height: 16),
 
@@ -84,8 +84,11 @@ class _LoginPageState extends State<LoginPage> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.lock_outline),
                       ),
-                      validator: (value) =>
-                          value!.length < 6 ? "Password min 6 karakter" : null,
+                      validator: (val) {
+                        if (val == null || val.isEmpty)
+                          return "Password wajib diisi";
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 24),
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/utils/app_validator.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -57,7 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       labelText: "Nama Lengkap",
                       border: OutlineInputBorder(),
                     ),
-                    validator: (v) => v!.isEmpty ? "Nama wajib diisi" : null,
+                    validator: AppValidator.validateName,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -66,8 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       labelText: "Email",
                       border: OutlineInputBorder(),
                     ),
-                    validator: (v) =>
-                        !v!.contains("@") ? "Email tidak valid" : null,
+                    validator: AppValidator.validateEmail,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -77,9 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       labelText: "Password",
                       border: OutlineInputBorder(),
                     ),
-                    validator: (v) => v!.length < 8
-                        ? "Minimal 8 karakter (sesuai spek)"
-                        : null,
+                    validator: AppValidator.validatePassword,
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
