@@ -6,6 +6,10 @@ import 'package:flutter_litera/features/auth/domain/repositories/auth_repository
 import 'package:flutter_litera/features/auth/domain/usecases/login_usecase.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/register_usecase.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:flutter_litera/features/hub/data/datasources/hub_remote_data_source.dart';
+import 'package:flutter_litera/features/hub/data/repositories/hub_repository_impl.dart';
+import 'package:flutter_litera/features/hub/domain/repositories/hub_repository.dart';
+import 'package:flutter_litera/features/hub/domain/usecases/get_all_hubs_usecase.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
@@ -42,4 +46,18 @@ Future<void> init() async {
   //== External (Firebase)
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
+
+  //== Features - Hub Selection
+  // Usecase
+  sl.registerLazySingleton(() => GetAllHubsUseCase(sl()));
+
+  // Repository
+  sl.registerLazySingleton<HubRepository>(
+    () => HubRepositoryImpl(remoteDataSource: sl()),
+  );
+
+  // Data Source
+  sl.registerLazySingleton<HubRemoteDataSource>(
+    () => HubRemoteDataSourceImpl(firestore: sl()),
+  );
 }
