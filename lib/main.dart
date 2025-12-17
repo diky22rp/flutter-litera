@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart' as di;
@@ -23,32 +25,35 @@ class LiteraApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'LITERA',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: AppColors.background,
-        primaryColor: AppColors.primary,
+    return MultiBlocProvider(
+      providers: [BlocProvider(create: (_) => di.sl<AuthBloc>())],
+      child: MaterialApp(
+        title: 'LITERA',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          scaffoldBackgroundColor: AppColors.background,
+          primaryColor: AppColors.primary,
 
-        colorScheme: const ColorScheme.light(
-          primary: AppColors.primary,
-          secondary: AppColors.action,
-          surface: AppColors.surface,
-          error: AppColors.error,
+          colorScheme: const ColorScheme.light(
+            primary: AppColors.primary,
+            secondary: AppColors.action,
+            surface: AppColors.surface,
+            error: AppColors.error,
+          ),
+
+          textTheme:
+              GoogleFonts.plusJakartaSansTextTheme(
+                ThemeData.light().textTheme,
+              ).apply(
+                bodyColor: AppColors.textMain,
+                displayColor: AppColors.textMain,
+              ),
+
+          useMaterial3: true,
         ),
-
-        textTheme:
-            GoogleFonts.plusJakartaSansTextTheme(
-              ThemeData.light().textTheme,
-            ).apply(
-              bodyColor: AppColors.textMain,
-              displayColor: AppColors.textMain,
-            ),
-
-        useMaterial3: true,
-      ),
-      home: const Scaffold(
-        body: Center(child: Text("LITERA Core Setup Complete")),
+        home: const Scaffold(
+          body: Center(child: Text("LITERA Core Setup Complete")),
+        ),
       ),
     );
   }
