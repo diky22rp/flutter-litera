@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/core/utils/app_validator.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_litera/features/auth/presentation/pages/register_page.dart';
@@ -23,20 +24,10 @@ class _LoginPageState extends State<LoginPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error,
-              ),
-            );
+            AppSnackbar.showError(context, state.message);
           } else if (state is AuthAuthenticated) {
             // Navigator.pushReplacementNamed(context, '/home');
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Login Berhasil!"),
-                backgroundColor: AppColors.success,
-              ),
-            );
+            AppSnackbar.showSuccess(context, "Berhasil masuk! Selamat datang.");
           }
         },
         builder: (context, state) {

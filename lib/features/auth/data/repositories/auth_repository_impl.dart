@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_litera/core/error/failures.dart';
+import 'package:flutter_litera/core/utils/firebase_error_handler.dart';
 import 'package:flutter_litera/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:flutter_litera/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_litera/features/auth/domain/repositories/auth_repository.dart';
@@ -48,7 +49,8 @@ class AuthRepositoryImpl implements AuthRepository {
       await remoteDataSource.logout();
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      final errorMessage = FirebaseErrorHandler.getMessage(e);
+      return Left(ServerFailure(errorMessage));
     }
   }
 }
