@@ -1,8 +1,10 @@
-class ApiConstants {
-  static const String baseUrl =
-      'https://bukuacak-9bdcb4ef2605.herokuapp.com/api/v1';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-  static const String getBooks = '$baseUrl/book';
-  static const String getRandomBook = '$baseUrl/random_book';
-  static const String getGenreStats = '$baseUrl/stats/genre';
+class ApiConstants {
+  static String baseUrl = dotenv.env['BASE_URL'] ?? '';
+
+  // Endpoints
+  static String getBooks = '$baseUrl/book';
+  static String getRandomBook = '$baseUrl/random_book';
+  static String getGenreStats = '$baseUrl/stats/genre';
 }

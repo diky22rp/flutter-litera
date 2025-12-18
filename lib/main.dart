@@ -7,9 +7,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart' as di;
 import 'core/constants/app_colors.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized;
+
+  // Load .env
+  await dotenv.load(fileName: ".env");
 
   //Init Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
