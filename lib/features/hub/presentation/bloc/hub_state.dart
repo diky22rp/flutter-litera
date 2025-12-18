@@ -19,6 +19,14 @@ class HubLoaded extends HubState {
   List<Object> get props => [hubs];
 }
 
+class HubNameLoaded extends HubState {
+  final String hubName;
+  const HubNameLoaded(this.hubName);
+
+  @override
+  List<Object> get props => [hubName];
+}
+
 class HubError extends HubState {
   final String message;
   const HubError(this.message);

@@ -19,6 +19,7 @@ import 'package:flutter_litera/features/hub/data/repositories/hub_repository_imp
 import 'package:flutter_litera/features/hub/domain/repositories/hub_repository.dart';
 import 'package:flutter_litera/features/hub/domain/usecases/cache_hub_id_usecase.dart';
 import 'package:flutter_litera/features/hub/domain/usecases/get_all_hubs_usecase.dart';
+import 'package:flutter_litera/features/hub/domain/usecases/get_cached_hub_name_usecase.dart';
 import 'package:flutter_litera/features/hub/presentation/bloc/hub_bloc.dart';
 import 'package:flutter_litera/features/main/presentation/cubit/main_cubit.dart';
 import 'package:get_it/get_it.dart';
@@ -68,6 +69,7 @@ Future<void> init() async {
   // Usecase
   sl.registerLazySingleton(() => GetAllHubsUseCase(sl()));
   sl.registerLazySingleton(() => CacheHubIdUseCase(sl()));
+  sl.registerLazySingleton(() => GetCachedHubNameUseCase(sl()));
 
   // Repository
   sl.registerLazySingleton<HubRepository>(
@@ -83,7 +85,11 @@ Future<void> init() async {
   );
 
   sl.registerFactory(
-    () => HubBloc(getAllHubsUseCase: sl(), cacheHubIdUseCase: sl()),
+    () => HubBloc(
+      getAllHubsUseCase: sl(),
+      cacheHubIdUseCase: sl(),
+      getCachedHubNameUseCase: sl(),
+    ),
   );
 
   //==Features - Home

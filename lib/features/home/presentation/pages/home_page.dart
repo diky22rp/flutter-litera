@@ -1,34 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/features/home/presentation/bloc/home_bloc.dart';
-import 'package:flutter_litera/features/hub/domain/repositories/hub_repository.dart';
+import 'package:flutter_litera/features/home/presentation/pages/widgets/location_section.dart';
+import 'package:flutter_litera/features/home/presentation/pages/widgets/user_profile_section.dart';
+import 'package:flutter_litera/features/hub/presentation/bloc/hub_bloc.dart';
 import 'package:flutter_litera/injection_container.dart';
 import 'package:intl/intl.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  String? _hubName;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadHubName();
-  }
-
-  void _loadHubName() async {
-    final result = await sl<HubRepository>().getSavedHubName();
-    result.fold((l) => null, (name) {
-      if (mounted) setState(() => _hubName = name);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,75 +20,59 @@ class _HomePageState extends State<HomePage> {
       decimalDigits: 0,
     );
 
-    return BlocProvider(
-      create: (context) => sl<HomeBloc>()..add(FetchHomeBooks()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<HomeBloc>()..add(FetchHomeBooks()),
+        ),
+        BlocProvider(
+          create: (context) => sl<HubBloc>()..add(GetSavedHubName()),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: SafeArea(
           child: Column(
             children: [
-              // 1. HEADER & LOCATION
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.location_on,
-                          color: AppColors.primary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Lokasi: ",
-                          style: TextStyle(color: AppColors.textGrey),
-                        ),
-                        Expanded(
-                          child: Text(
-                            _hubName ?? "Memuat lokasi...",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textMain,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: AppColors.textGrey,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
+              UserProfileSection(),
 
-                    // 2. SEARCH BAR
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(50), // Pill Shape
-                        boxShadow: const [
-                          BoxShadow(
-                            color: AppColors.shadow,
-                            blurRadius: 10,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
+              const SizedBox(height: 20),
+
+              LocationSection(),
+
+              const SizedBox(height: 16),
+
+              // ==========================================
+              // 3. SEARCH BAR
+              // ==========================================
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(50),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: AppColors.shadow,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
                       ),
-                      child: const TextField(
-                        decoration: InputDecoration(
-                          hintText: "Cari judul buku...",
-                          border: InputBorder.none,
-                          icon: Icon(Icons.search, color: AppColors.textGrey),
-                        ),
-                      ),
+                    ],
+                  ),
+                  child: const TextField(
+                    decoration: InputDecoration(
+                      hintText: "Cari judul buku...",
+                      border: InputBorder.none,
+                      icon: Icon(Icons.search, color: AppColors.textGrey),
                     ),
-                  ],
+                  ),
                 ),
               ),
 
-              // 3. BOOK LIST (BENTO GRID)
+              // ==========================================
+              // 4. BOOK LIST (BENTO GRID)
+              // ==========================================
               Expanded(
                 child: BlocBuilder<HomeBloc, HomeState>(
                   builder: (context, state) {
@@ -124,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                       return GridView.builder(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 10,
+                          vertical: 20,
                         ),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -138,9 +104,12 @@ class _HomePageState extends State<HomePage> {
                           final book = state.books[index];
                           return InkWell(
                             onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Buka: ${book.title}")),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (_) => DetailBookPage(book: book),
+                              //   ),
+                              // );
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -162,14 +131,19 @@ class _HomePageState extends State<HomePage> {
                                       borderRadius: const BorderRadius.vertical(
                                         top: Radius.circular(16),
                                       ),
-                                      child: CachedNetworkImage(
-                                        imageUrl: book.coverUrl,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        placeholder: (context, url) =>
-                                            Container(color: Colors.grey[200]),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(Icons.broken_image),
+                                      child: Hero(
+                                        tag: book.id,
+                                        child: CachedNetworkImage(
+                                          imageUrl: book.coverUrl,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              Container(
+                                                color: Colors.grey[200],
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.broken_image),
+                                        ),
                                       ),
                                     ),
                                   ),

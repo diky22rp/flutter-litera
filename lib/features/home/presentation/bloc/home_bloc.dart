@@ -16,7 +16,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final result = await getBooksUseCase(NoParams());
       result.fold(
         (failure) => emit(HomeError(failure.message)),
-        (books) => emit(HomeLoaded(books)),
+        (books) => emit(HomeLoaded(books: books)),
       );
     });
   }

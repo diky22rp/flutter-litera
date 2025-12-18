@@ -13,7 +13,9 @@ class HomeLoading extends HomeState {}
 
 class HomeLoaded extends HomeState {
   final List<BookEntity> books;
-  const HomeLoaded(this.books);
+
+  const HomeLoaded({required this.books});
+
   @override
   List<Object> get props => [books];
 }

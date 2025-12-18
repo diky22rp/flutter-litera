@@ -12,4 +12,9 @@ class FetchAllHubs extends HubEvent {}
 class SelectHub extends HubEvent {
   final HubEntity hub;
   const SelectHub(this.hub);
+
+  @override
+  List<Object> get props => [hub];
 }
+
+class GetSavedHubName extends HubEvent {}
