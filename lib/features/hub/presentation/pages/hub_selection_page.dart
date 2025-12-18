@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
-import 'package:flutter_litera/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_litera/features/hub/presentation/bloc/hub_bloc.dart';
+import 'package:flutter_litera/features/main/presentation/pages/main_page.dart';
 import 'package:flutter_litera/injection_container.dart';
 
 class HubSelectionPage extends StatelessWidget {
@@ -38,7 +38,7 @@ class HubSelectionPage extends StatelessWidget {
                     if (state is HubSelectedSuccess) {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => const HomePage()),
+                        MaterialPageRoute(builder: (_) => const MainPage()),
                       );
 
                       AppSnackbar.showSuccess(

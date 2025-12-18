@@ -5,6 +5,7 @@ import 'package:flutter_litera/features/auth/data/datasources/auth_remote_data_s
 import 'package:flutter_litera/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:flutter_litera/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/login_usecase.dart';
+import 'package:flutter_litera/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/register_usecase.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_litera/features/home/data/datasources/home_remote_data_source.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_litera/features/hub/domain/repositories/hub_repository.d
 import 'package:flutter_litera/features/hub/domain/usecases/cache_hub_id_usecase.dart';
 import 'package:flutter_litera/features/hub/domain/usecases/get_all_hubs_usecase.dart';
 import 'package:flutter_litera/features/hub/presentation/bloc/hub_bloc.dart';
+import 'package:flutter_litera/features/main/presentation/cubit/main_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,6 +34,7 @@ Future<void> init() async {
   //==Features - Auth
   // Usecase
   sl.registerLazySingleton(() => LoginUseCase(sl()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl()));
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
 
   // Repository
@@ -48,6 +51,7 @@ Future<void> init() async {
   sl.registerFactory(
     () => AuthBloc(
       loginUseCase: sl(),
+      logoutUseCase: sl(),
       registerUseCase: sl(),
       authRepository: sl(),
     ),
@@ -98,4 +102,7 @@ Future<void> init() async {
   sl.registerLazySingleton<HomeRemoteDataSource>(
     () => HomeRemoteDataSourceImpl(dio: sl()),
   );
+
+  //== Features - Main Navigation dll
+  sl.registerFactory(() => MainCubit());
 }

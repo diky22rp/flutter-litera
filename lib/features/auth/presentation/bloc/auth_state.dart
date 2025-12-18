@@ -7,29 +7,31 @@ sealed class AuthState extends Equatable {
   List<Object> get props => [];
 }
 
+//UI STATE FLOW
 final class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-class AuthAuthenticated extends AuthState {
-  final UserEntity user;
-  const AuthAuthenticated(this.user);
-
-  @override
-  List<Object> get props => [user];
-}
-
-class AuthRegistered extends AuthState {
-  final UserEntity user;
-  const AuthRegistered(this.user);
-
-  @override
-  List<Object> get props => [user];
-}
-
 class AuthUnauthenticated extends AuthState {}
 
-class AuthError extends AuthState {
+//RESULT STATE /SIDE EFFECT
+sealed class AuthResultState extends AuthState {
+  const AuthResultState();
+}
+
+enum AuthSource { login, register }
+
+class AuthAuthenticated extends AuthResultState {
+  final UserEntity user;
+  final AuthSource source;
+
+  const AuthAuthenticated({required this.user, required this.source});
+
+  @override
+  List<Object> get props => [user, source];
+}
+
+class AuthError extends AuthResultState {
   final String message;
   const AuthError(this.message);
 

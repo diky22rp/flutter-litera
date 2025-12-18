@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/features/auth/domain/repositories/auth_repository.dart';
 import 'package:flutter_litera/features/auth/presentation/pages/login_page.dart';
-import 'package:flutter_litera/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_litera/features/hub/domain/repositories/hub_repository.dart';
 import 'package:flutter_litera/features/hub/presentation/pages/hub_selection_page.dart';
+import 'package:flutter_litera/features/main/presentation/pages/main_page.dart';
 import 'package:flutter_litera/injection_container.dart';
 
 class SplashPage extends StatefulWidget {
@@ -44,7 +44,7 @@ class _SplashPageState extends State<SplashPage> {
           if (hubId != null && hubId.isNotEmpty) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => const HomePage()),
+              MaterialPageRoute(builder: (_) => const MainPage()),
             );
           } else {
             Navigator.pushReplacement(
