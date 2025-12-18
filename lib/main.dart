@@ -33,7 +33,7 @@ class LiteraApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [BlocProvider(create: (_) => di.sl<AuthBloc>())],
       child: MaterialApp(
-        title: 'LITERA',
+        title: dotenv.env['APP_NAME'],
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           scaffoldBackgroundColor: AppColors.background,
