@@ -12,27 +12,27 @@ class RegisterPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Daftar Akun Baru")),
       body: BlocListener<AuthBloc, AuthState>(
-        listenWhen: (_, current) => current is AuthResultState,
         listener: (context, state) {
-          if (state is AuthAuthenticated &&
-              state.source == AuthSource.register) {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Registrasi Berhasil! Silakan Login."),
-                backgroundColor: AppColors.success,
-              ),
-            );
-          }
-
-          if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
+          state.maybeWhen(
+            authenticated: (user, source) {
+              if (source == AuthSource.register) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Registrasi Berhasil! Silakan Login."),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+              }
+            },
+            error: (message) => ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(message),
                 backgroundColor: AppColors.error,
               ),
-            );
-          }
+            ),
+            orElse: () {},
+          );
         },
         child: Stack(
           children: [
@@ -42,13 +42,13 @@ class RegisterPage extends StatelessWidget {
             ),
             BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
-                if (state is AuthLoading) {
-                  return Container(
+                return state.maybeWhen(
+                  loading: () => Container(
                     color: Colors.black38,
                     child: const Center(child: CircularProgressIndicator()),
-                  );
-                }
-                return const SizedBox.shrink();
+                  ),
+                  orElse: () => const SizedBox.shrink(),
+                );
               },
             ),
           ],

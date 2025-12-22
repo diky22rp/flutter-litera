@@ -37,7 +37,6 @@ class MainPage extends StatelessWidget {
               ),
               child: NavigationBarTheme(
                 data: NavigationBarThemeData(
-                  // Update: Ganti withOpacity jadi withValues sesuai saran linting
                   indicatorColor: AppColors.primary.withValues(alpha: 0.1),
                   labelTextStyle: WidgetStateProperty.all(
                     const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),

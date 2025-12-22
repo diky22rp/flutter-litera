@@ -12,24 +12,23 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
-        listenWhen: (_, current) => current is AuthResultState,
         listener: (context, state) {
-          if (state is AuthAuthenticated) {
-            if (state.source == AuthSource.login) {
-              AppSnackbar.showSuccess(
-                context,
-                "Berhasil masuk! Selamat datang.",
-              );
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const HubSelectionPage()),
-              );
-            }
-          }
-
-          if (state is AuthError) {
-            AppSnackbar.showError(context, state.message);
-          }
+          state.maybeWhen(
+            authenticated: (user, source) {
+              if (source == AuthSource.login) {
+                AppSnackbar.showSuccess(
+                  context,
+                  "Berhasil masuk! Selamat datang, ${user.name}.",
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HubSelectionPage()),
+                );
+              }
+            },
+            error: (message) => AppSnackbar.showError(context, message),
+            orElse: () {},
+          );
         },
         child: Stack(
           children: [
@@ -39,13 +38,13 @@ class LoginPage extends StatelessWidget {
             ),
             BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
-                if (state is AuthLoading) {
-                  return Container(
+                return state.maybeWhen(
+                  loading: () => Container(
                     color: Colors.black38,
                     child: const Center(child: CircularProgressIndicator()),
-                  );
-                }
-                return const SizedBox.shrink();
+                  ),
+                  orElse: () => const SizedBox.shrink(),
+                );
               },
             ),
           ],

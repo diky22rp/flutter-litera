@@ -16,8 +16,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final user = await remoteDataSource.login(email, password);
-      return Right(user);
+      final userModel = await remoteDataSource.login(email, password);
+
+      return Right(userModel.toEntity());
     } catch (e) {
       final errorMessage = FirebaseErrorHandler.getMessage(e);
       return Left(ServerFailure(errorMessage));
@@ -31,8 +32,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final user = await remoteDataSource.register(name, email, password);
-      return Right(user);
+      final userModel = await remoteDataSource.register(name, email, password);
+
+      return Right(userModel.toEntity());
     } catch (e) {
       final errorMessage = FirebaseErrorHandler.getMessage(e);
       return Left(ServerFailure(errorMessage));
@@ -41,8 +43,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<bool> isLoggedIn() async {
-    final user = await remoteDataSource.getCurrentUser();
-    return user != null;
+    try {
+      final user = await remoteDataSource.getCurrentUser();
+      return user != null;
+    } catch (_) {
+      return false;
+    }
   }
 
   @override
@@ -52,6 +58,23 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Right(null);
     } catch (e) {
       final errorMessage = FirebaseErrorHandler.getMessage(e);
+      return Left(ServerFailure(errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity?>> getCurrentUser() async {
+    try {
+      final userModel = await remoteDataSource.getCurrentUser();
+
+      if (userModel != null) {
+        return Right(userModel.toEntity());
+      } else {
+        return const Right(null);
+      }
+    } catch (e) {
+      final errorMessage = FirebaseErrorHandler.getMessage(e);
+
       return Left(ServerFailure(errorMessage));
     }
   }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
-import 'package:flutter_litera/features/home/domain/entities/book_entity.dart';
+import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
 import 'package:flutter_litera/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter_litera/injection_container.dart';
 import 'package:intl/intl.dart';
@@ -22,7 +22,9 @@ class NewBookSection extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => sl<HomeBloc>()..add(FetchHomeBooks())),
+        BlocProvider(
+          create: (_) => sl<HomeBloc>()..add(HomeEvent.fetchHomeBooks()),
+        ),
       ],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,38 +76,40 @@ class NewBookSection extends StatelessWidget {
             height: 275,
             child: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
-                if (state is HomeLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is HomeError) {
-                  return Center(child: Text(state.message));
-                } else if (state is HomeLoaded) {
-                  if (state.books.isEmpty) {
-                    return const Center(child: Text("Belum ada buku."));
-                  }
+                return state.maybeWhen(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
 
-                  final displayBooks = state.books.take(5).toList();
+                  error: (message) => Center(child: Text(message)),
 
-                  final itemCount = displayBooks.length + 1;
+                  loaded: (books) {
+                    if (books.isEmpty) {
+                      return const Center(child: Text("Belum ada buku."));
+                    }
 
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(20),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: itemCount,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(width: 16),
-                    itemBuilder: (context, index) {
-                      // KARTU TERAKHIR: Tombol View All
-                      if (index == displayBooks.length) {
-                        return _buildViewAllCard(context);
-                      }
+                    final displayBooks = books.take(5).toList();
+                    final itemCount = displayBooks.length + 1;
 
-                      // KARTU BUKU BIASA
-                      final book = displayBooks[index];
-                      return _buildBookCard(context, book, currencyFormat);
-                    },
-                  );
-                }
-                return const SizedBox();
+                    return ListView.separated(
+                      padding: const EdgeInsets.all(20),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: itemCount,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 16),
+                      itemBuilder: (context, index) {
+                        if (index == displayBooks.length) {
+                          return _buildViewAllCard(context);
+                        }
+
+                        final book = displayBooks[index];
+                        return _buildBookCard(context, book, currencyFormat);
+                      },
+                    );
+                  },
+
+                  // 4. STATE LAINNYA (Initial, dll)
+                  orElse: () => const SizedBox(),
+                );
               },
             ),
           ),

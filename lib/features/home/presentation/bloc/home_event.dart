@@ -1,10 +1,8 @@
 part of 'home_bloc.dart';
 
-sealed class HomeEvent extends Equatable {
-  const HomeEvent();
-
-  @override
-  List<Object> get props => [];
+@freezed
+class HomeEvent with _$HomeEvent {
+  const factory HomeEvent.fetchHomeBooks() = _FetchHomeBooks;
+  // const factory HomeEvent.refresh() = _Refresh;
+  // const factory HomeEvent.searchBook(String query) = _SearchBook;
 }
-
-class FetchHomeBooks extends HomeEvent {}

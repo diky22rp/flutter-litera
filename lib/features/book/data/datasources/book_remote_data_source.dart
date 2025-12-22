@@ -1,15 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_litera/core/constants/api_constants.dart';
-import 'package:flutter_litera/features/home/data/models/book_model.dart';
+import 'package:flutter_litera/features/book/data/models/book_model.dart';
 
-abstract class HomeRemoteDataSource {
+abstract class BookRemoteDataSource {
   Future<List<BookModel>> getBooksFromApi();
 }
 
-class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
+class BookRemoteDataSourceImpl implements BookRemoteDataSource {
   final Dio dio;
 
-  HomeRemoteDataSourceImpl({required this.dio});
+  BookRemoteDataSourceImpl({required this.dio});
 
   @override
   Future<List<BookModel>> getBooksFromApi() async {

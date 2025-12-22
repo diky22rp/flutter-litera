@@ -50,36 +50,36 @@ class UserProfileSection extends StatelessWidget {
             builder: (context, state) {
               final greetingText = _getGreeting();
 
-              if (state is AuthAuthenticated) {
-                final userName = state.user.name;
+              return state.maybeWhen(
+                authenticated: (user, source) {
+                  final userName = user.name;
 
-                return Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        greetingText,
-                        style: TextStyle(
-                          color: AppColors.textGrey,
-                          fontSize: 12,
+                  return Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          greetingText,
+                          style: TextStyle(
+                            color: AppColors.textGrey,
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "Halo, $userName! 👋",
-                        style: const TextStyle(
-                          color: AppColors.textMain,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        Text(
+                          "Halo, $userName! 👋",
+                          style: const TextStyle(
+                            color: AppColors.textMain,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                );
-              } else if (state is AuthLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else {
-                return Expanded(
+                      ],
+                    ),
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                orElse: () => Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -129,8 +129,8 @@ class UserProfileSection extends StatelessWidget {
                       ),
                     ],
                   ),
-                );
-              }
+                ),
+              );
             },
           ),
 

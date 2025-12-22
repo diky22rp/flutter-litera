@@ -86,7 +86,7 @@ class _LoginFormState extends State<LoginForm> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   context.read<AuthBloc>().add(
-                    AuthLogin(
+                    AuthEvent.login(
                       email: _emailController.text,
                       password: _passwordController.text,
                     ),

@@ -4,14 +4,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_litera/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:flutter_litera/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:flutter_litera/features/auth/domain/repositories/auth_repository.dart';
+import 'package:flutter_litera/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/login_usecase.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:flutter_litera/features/auth/domain/usecases/register_usecase.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:flutter_litera/features/home/data/datasources/home_remote_data_source.dart';
-import 'package:flutter_litera/features/home/data/repositories/book_repository_impl.dart';
-import 'package:flutter_litera/features/home/domain/repositories/book_repository.dart';
-import 'package:flutter_litera/features/home/domain/usecases/get_books_usecase.dart';
+import 'package:flutter_litera/features/book/data/datasources/book_remote_data_source.dart';
+import 'package:flutter_litera/features/book/data/repositories/book_repository_impl.dart';
+import 'package:flutter_litera/features/book/domain/repositories/book_repository.dart';
+import 'package:flutter_litera/features/book/presentation/usecases/get_books_usecase.dart';
 import 'package:flutter_litera/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter_litera/features/hub/data/datasources/hub_local_data_source.dart';
 import 'package:flutter_litera/features/hub/data/datasources/hub_remote_data_source.dart';
@@ -37,6 +38,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => LoginUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
+  sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(
@@ -55,6 +57,7 @@ Future<void> init() async {
       logoutUseCase: sl(),
       registerUseCase: sl(),
       authRepository: sl(),
+      getCurrentUserUseCase: sl(),
     ),
   );
 
@@ -105,8 +108,8 @@ Future<void> init() async {
   );
 
   // Data Source
-  sl.registerLazySingleton<HomeRemoteDataSource>(
-    () => HomeRemoteDataSourceImpl(dio: sl()),
+  sl.registerLazySingleton<BookRemoteDataSource>(
+    () => BookRemoteDataSourceImpl(dio: sl()),
   );
 
   //== Features - Main Navigation dll

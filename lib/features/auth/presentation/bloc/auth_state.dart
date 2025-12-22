@@ -1,40 +1,18 @@
 part of 'auth_bloc.dart';
 
-sealed class AuthState extends Equatable {
-  const AuthState();
+enum AuthSource { login, register, initial }
 
-  @override
-  List<Object> get props => [];
-}
+@freezed
+class AuthState with _$AuthState {
+  const factory AuthState.initial() = _Initial;
+  const factory AuthState.loading() = _Loading;
 
-//UI STATE FLOW
-final class AuthInitial extends AuthState {}
+  const factory AuthState.authenticated(
+    UserEntity user, {
+    @Default(AuthSource.initial) AuthSource source,
+  }) = _Authenticated;
 
-class AuthLoading extends AuthState {}
+  const factory AuthState.unauthenticated() = _Unauthenticated;
 
-class AuthUnauthenticated extends AuthState {}
-
-//RESULT STATE /SIDE EFFECT
-sealed class AuthResultState extends AuthState {
-  const AuthResultState();
-}
-
-enum AuthSource { login, register }
-
-class AuthAuthenticated extends AuthResultState {
-  final UserEntity user;
-  final AuthSource source;
-
-  const AuthAuthenticated({required this.user, required this.source});
-
-  @override
-  List<Object> get props => [user, source];
-}
-
-class AuthError extends AuthResultState {
-  final String message;
-  const AuthError(this.message);
-
-  @override
-  List<Object> get props => [message];
+  const factory AuthState.error(String message) = _Error;
 }

@@ -1,28 +1,11 @@
 part of 'home_bloc.dart';
 
-sealed class HomeState extends Equatable {
-  const HomeState();
+@freezed
+class HomeState with _$HomeState {
+  const factory HomeState.initial() = _Initial;
+  const factory HomeState.loading() = _Loading;
 
-  @override
-  List<Object> get props => [];
-}
+  const factory HomeState.loaded({required List<BookEntity> books}) = _Loaded;
 
-class HomeInitial extends HomeState {}
-
-class HomeLoading extends HomeState {}
-
-class HomeLoaded extends HomeState {
-  final List<BookEntity> books;
-
-  const HomeLoaded({required this.books});
-
-  @override
-  List<Object> get props => [books];
-}
-
-class HomeError extends HomeState {
-  final String message;
-  const HomeError(this.message);
-  @override
-  List<Object> get props => [message];
+  const factory HomeState.error(String message) = _Error;
 }

@@ -11,53 +11,73 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
-        // listenWhen: (_, current) => current is AuthResultState,
         listener: (context, state) {
-          if (state is AuthUnauthenticated) {
-            AppSnackbar.showSuccess(context, "Logout berhasil!");
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const LoginPage()),
-              (route) => false,
-            );
-          }
+          state.maybeWhen(
+            unauthenticated: () {
+              AppSnackbar.showSuccess(context, "Logout berhasil!");
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginPage()),
+                (route) => false,
+              );
+            },
 
-          if (state is AuthError) {
-            AppSnackbar.showError(context, state.message);
-          }
+            error: (message) => AppSnackbar.showError(context, message),
+
+            orElse: () {},
+          );
         },
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
-            if (state is AuthAuthenticated) {
-              final user = state.user;
-
-              return Center(
+            return state.maybeWhen(
+              authenticated: (user, source) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.blueAccent,
+                      child: Text(
+                        user.name[0].toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     Text(
                       "Halo, ${user.name}",
-                      style: const TextStyle(fontSize: 24),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
-                      "Email: ${user.email}",
-                      style: const TextStyle(fontSize: 16),
+                      user.email,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 40),
-                    ElevatedButton(
+
+                    ElevatedButton.icon(
                       onPressed: () {
-                        context.read<AuthBloc>().add(AuthLogout());
+                        context.read<AuthBloc>().add(const AuthEvent.logout());
                       },
-                      child: const Text("Logout"),
+                      icon: const Icon(Icons.logout),
+                      label: const Text("Keluar Akun"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: Colors.white,
+                      ),
                     ),
                   ],
                 ),
-              );
-            } else if (state is AuthLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              return const Center(child: Text("User belum login"));
-            }
+              ),
+
+              loading: () => const Center(child: CircularProgressIndicator()),
+
+              orElse: () => const Center(child: Text("User belum login")),
+            );
           },
         ),
       ),

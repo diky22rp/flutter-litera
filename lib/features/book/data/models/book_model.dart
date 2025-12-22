@@ -1,4 +1,4 @@
-import 'package:flutter_litera/features/home/domain/entities/book_entity.dart';
+import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
 
 class BookModel extends BookEntity {
   const BookModel({
