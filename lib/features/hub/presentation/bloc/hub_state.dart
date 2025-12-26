@@ -1,38 +1,15 @@
-part of 'hub_bloc.dart';
+import 'package:flutter_litera/features/hub/domain/entities/hub_entity.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-sealed class HubState extends Equatable {
-  const HubState();
+part 'hub_state.freezed.dart';
 
-  @override
-  List<Object> get props => [];
+@freezed
+class HubEvent with _$HubEvent {
+  const factory HubEvent.fetchAllHubs() = _FetchAllHubs;
+
+  const factory HubEvent.selectHub(HubEntity hub) = _SelectHub;
+
+  const factory HubEvent.getSavedHubName() = _GetSavedHubName;
+
+  const factory HubEvent.checkHubSelection() = _CheckHubSelection;
 }
-
-final class HubInitial extends HubState {}
-
-class HubLoading extends HubState {}
-
-class HubLoaded extends HubState {
-  final List<HubEntity> hubs;
-  const HubLoaded(this.hubs);
-
-  @override
-  List<Object> get props => [hubs];
-}
-
-class HubNameLoaded extends HubState {
-  final String hubName;
-  const HubNameLoaded(this.hubName);
-
-  @override
-  List<Object> get props => [hubName];
-}
-
-class HubError extends HubState {
-  final String message;
-  const HubError(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
-class HubSelectedSuccess extends HubState {}

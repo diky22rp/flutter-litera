@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:flutter_litera/features/auth/presentation/pages/login_page.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -15,11 +15,7 @@ class ProfilePage extends StatelessWidget {
           state.maybeWhen(
             unauthenticated: () {
               AppSnackbar.showSuccess(context, "Logout berhasil!");
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => const LoginPage()),
-                (route) => false,
-              );
+              context.goNamed('login');
             },
 
             error: (message) => AppSnackbar.showError(context, message),

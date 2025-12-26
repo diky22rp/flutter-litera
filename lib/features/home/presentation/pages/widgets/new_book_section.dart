@@ -5,7 +5,7 @@ import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
 import 'package:flutter_litera/features/home/presentation/bloc/home_bloc.dart';
-import 'package:flutter_litera/injection_container.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class NewBookSection extends StatelessWidget {
@@ -20,101 +20,93 @@ class NewBookSection extends StatelessWidget {
       decimalDigits: 0,
     );
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => sl<HomeBloc>()..add(HomeEvent.fetchHomeBooks()),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ==========================================
+        // 1. HEADER SECTION
+        // ==========================================
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Buku Terbaru',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textMain,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  AppSnackbar.showInfo(context, "Testing.");
+                  // Navigasi ke Search Page (View All)
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (_) => const SearchPage()),
+                  // );
+                },
+                child: const Text(
+                  "Lihat Semua",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 5),
+
+        // ==========================================
+        // 2. BOOK LIST SECTION
+        // ==========================================
+        SizedBox(
+          height: 275,
+          child: BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                loading: () => const Center(child: CircularProgressIndicator()),
+
+                error: (message) => Center(child: Text(message)),
+
+                loaded: (books) {
+                  if (books.isEmpty) {
+                    return const Center(child: Text("Belum ada buku."));
+                  }
+
+                  final displayBooks = books.take(5).toList();
+                  final itemCount = displayBooks.length + 1;
+
+                  return ListView.separated(
+                    padding: const EdgeInsets.all(20),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: itemCount,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 16),
+                    itemBuilder: (context, index) {
+                      if (index == displayBooks.length) {
+                        return _buildViewAllCard(context);
+                      }
+
+                      final book = displayBooks[index];
+                      return _buildBookCard(context, book, currencyFormat);
+                    },
+                  );
+                },
+
+                // 4. STATE LAINNYA (Initial, dll)
+                orElse: () => const SizedBox(),
+              );
+            },
+          ),
         ),
       ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ==========================================
-          // 1. HEADER SECTION
-          // ==========================================
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Buku Terbaru',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textMain,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    AppSnackbar.showInfo(context, "Testing.");
-                    // Navigasi ke Search Page (View All)
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (_) => const SearchPage()),
-                    // );
-                  },
-                  child: const Text(
-                    "Lihat Semua",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 5),
-
-          // ==========================================
-          // 2. BOOK LIST SECTION
-          // ==========================================
-          SizedBox(
-            height: 275,
-            child: BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-
-                  error: (message) => Center(child: Text(message)),
-
-                  loaded: (books) {
-                    if (books.isEmpty) {
-                      return const Center(child: Text("Belum ada buku."));
-                    }
-
-                    final displayBooks = books.take(5).toList();
-                    final itemCount = displayBooks.length + 1;
-
-                    return ListView.separated(
-                      padding: const EdgeInsets.all(20),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: itemCount,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(width: 16),
-                      itemBuilder: (context, index) {
-                        if (index == displayBooks.length) {
-                          return _buildViewAllCard(context);
-                        }
-
-                        final book = displayBooks[index];
-                        return _buildBookCard(context, book, currencyFormat);
-                      },
-                    );
-                  },
-
-                  // 4. STATE LAINNYA (Initial, dll)
-                  orElse: () => const SizedBox(),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -131,12 +123,7 @@ class NewBookSection extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (_) => DetailBookPage(book: book),
-        //   ),
-        // );
+        context.pushNamed('book-detail', extra: book);
       },
       child: Container(
         width: 160,

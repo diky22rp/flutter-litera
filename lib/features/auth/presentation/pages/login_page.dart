@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_litera/features/auth/presentation/pages/widgets/login_form.dart';
-import 'package:flutter_litera/features/hub/presentation/pages/hub_selection_page.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -20,10 +20,7 @@ class LoginPage extends StatelessWidget {
                   context,
                   "Berhasil masuk! Selamat datang, ${user.name}.",
                 );
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HubSelectionPage()),
-                );
+                context.goNamed('hub-selection');
               }
             },
             error: (message) => AppSnackbar.showError(context, message),

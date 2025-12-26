@@ -4,7 +4,9 @@ import 'package:flutter_litera/core/utils/firebase_error_handler.dart';
 import 'package:flutter_litera/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:flutter_litera/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_litera/features/auth/domain/repositories/auth_repository.dart';
+import 'package:injectable/injectable.dart';
 
+@LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
 

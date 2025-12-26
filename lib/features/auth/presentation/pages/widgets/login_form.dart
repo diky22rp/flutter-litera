@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/core/utils/app_validator.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:flutter_litera/features/auth/presentation/pages/register_page.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -111,10 +111,7 @@ class _LoginFormState extends State<LoginForm> {
 
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const RegisterPage()),
-                );
+                context.pushNamed('register');
               },
               child: const Text("Belum punya akun? Daftar disini"),
             ),

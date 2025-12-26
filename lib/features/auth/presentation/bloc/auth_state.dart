@@ -1,4 +1,7 @@
-part of 'auth_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter_litera/features/auth/domain/entities/user_entity.dart';
+
+part 'auth_state.freezed.dart';
 
 enum AuthSource { login, register, initial }
 

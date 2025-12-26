@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_litera/injection.dart';
+import 'package:go_router/go_router.dart'; // 👈 Import GoRouter
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/hub/presentation/bloc/hub_bloc.dart';
-import 'package:flutter_litera/features/main/presentation/pages/main_page.dart';
-import 'package:flutter_litera/injection_container.dart';
 
 class HubSelectionPage extends StatelessWidget {
-  const HubSelectionPage({super.key});
+  final bool isEditMode;
+
+  const HubSelectionPage({super.key, this.isEditMode = false});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<HubBloc>()..add(FetchAllHubs()),
+      create: (context) => sl<HubBloc>()..add(const HubEvent.fetchAllHubs()),
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -32,119 +34,145 @@ class HubSelectionPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16, color: AppColors.textGrey),
               ),
               const SizedBox(height: 20),
-              Expanded(
-                child: BlocConsumer<HubBloc, HubState>(
-                  listener: (context, state) {
-                    if (state is HubSelectedSuccess) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const MainPage()),
-                      );
 
-                      AppSnackbar.showSuccess(
-                        context,
-                        "Lokasi tersimpan! Menuju Home...",
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    return BlocBuilder<HubBloc, HubState>(
-                      builder: (context, state) {
-                        if (state is HubLoading) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+              // EXPANDED LIST
+              Expanded(
+                child: BlocListener<HubBloc, HubState>(
+                  listener: (context, state) {
+                    state.maybeWhen(
+                      hubNameLoaded: (name) {
+                        if (isEditMode) {
+                          context.pop(true);
+                          AppSnackbar.showSuccess(
+                            context,
+                            "Lokasi berubah ke $name",
                           );
-                        } else if (state is HubError) {
-                          return Center(child: Text(state.message));
-                        } else if (state is HubLoaded) {
-                          if (state.hubs.isEmpty) {
+                        } else {
+                          context.goNamed('home');
+                          AppSnackbar.showSuccess(
+                            context,
+                            "Anda memilih lokasi $name",
+                          );
+                        }
+                      },
+                      error: (msg) => AppSnackbar.showError(context, msg),
+                      orElse: () {},
+                    );
+                  },
+                  child: BlocBuilder<HubBloc, HubState>(
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+
+                        error: (message) => Center(child: Text(message)),
+
+                        loaded: (hubs) {
+                          if (hubs.isEmpty) {
                             return const Center(
                               child: Text("Belum ada Hub tersedia."),
                             );
                           }
+
                           return ListView.separated(
-                            itemCount: state.hubs.length,
+                            itemCount: hubs.length,
                             separatorBuilder: (_, __) =>
                                 const SizedBox(height: 16),
                             itemBuilder: (context, index) {
-                              final hub = state.hubs[index];
-                              return InkWell(
-                                onTap: () {
-                                  //event select hub
-                                  context.read<HubBloc>().add(SelectHub(hub));
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.all(20),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.surface,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: AppColors.shadow,
-                                        blurRadius: 10,
-                                        offset: Offset(0, 4),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            236,
-                                            236,
-                                            255,
-                                          ).withValues(alpha: 26),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.store_mall_directory_rounded,
-                                          color: AppColors.primary,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              hub.name,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                color: AppColors.textMain,
-                                              ),
+                              final hub = hubs[index];
+
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 4),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: AppColors.shadow,
+                                      blurRadius: 10,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Material(
+                                  color: AppColors.surface,
+                                  borderRadius: BorderRadius.circular(20),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: InkWell(
+                                    onTap: () {
+                                      context.read<HubBloc>().add(
+                                        HubEvent.selectHub(hub),
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Row(
+                                        children: [
+                                          // Icon Toko
+                                          Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: const Color.fromARGB(
+                                                255,
+                                                236,
+                                                236,
+                                                255,
+                                              ).withValues(alpha: 26),
+                                              shape: BoxShape.circle,
                                             ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              hub.location,
-                                              style: const TextStyle(
-                                                color: AppColors.textGrey,
-                                                fontSize: 14,
-                                              ),
+                                            child: const Icon(
+                                              Icons
+                                                  .store_mall_directory_rounded,
+                                              color: AppColors.primary,
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                          const SizedBox(width: 16),
+
+                                          // Teks Info Hub
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  hub.name,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: AppColors.textMain,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  hub.location,
+                                                  style: const TextStyle(
+                                                    color: AppColors.textGrey,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+
+                                          // Arrow Icon
+                                          const Icon(
+                                            Icons.arrow_forward_ios,
+                                            size: 16,
+                                            color: AppColors.textGrey,
+                                          ),
+                                        ],
                                       ),
-                                      const Icon(
-                                        Icons.arrow_forward_ios,
-                                        size: 16,
-                                        color: AppColors.textGrey,
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               );
                             },
                           );
-                        }
-                        return const SizedBox();
-                      },
-                    );
-                  },
+                        },
+
+                        orElse: () => const SizedBox(),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

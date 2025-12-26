@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_litera/core/constants/api_constants.dart';
 import 'package:flutter_litera/features/book/data/models/book_model.dart';
+import 'package:injectable/injectable.dart';
 
 abstract class BookRemoteDataSource {
   Future<List<BookModel>> getBooksFromApi();
 }
 
+@LazySingleton(as: BookRemoteDataSource)
 class BookRemoteDataSourceImpl implements BookRemoteDataSource {
   final Dio dio;
 

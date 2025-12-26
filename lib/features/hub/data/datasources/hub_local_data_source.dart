@@ -1,3 +1,4 @@
+import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String cachedHubId = 'CACHED_HUB_ID';
@@ -9,6 +10,7 @@ abstract class HubLocalDataSource {
   Future<String?> getCachedHubName();
 }
 
+@LazySingleton(as: HubLocalDataSource)
 class HubLocalDataSourceImpl implements HubLocalDataSource {
   final SharedPreferences sharedPreferences;
 

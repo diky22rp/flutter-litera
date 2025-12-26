@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_litera/features/hub/data/models/hub_model.dart';
+import 'package:injectable/injectable.dart';
 
 abstract class HubRemoteDataSource {
   Future<List<HubModel>> getAllHubs();
 }
 
+@LazySingleton(as: HubRemoteDataSource)
 class HubRemoteDataSourceImpl implements HubRemoteDataSource {
   final FirebaseFirestore firestore;
 

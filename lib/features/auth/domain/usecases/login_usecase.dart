@@ -4,6 +4,7 @@ import 'package:flutter_litera/core/error/failures.dart';
 import 'package:flutter_litera/core/usecases/usecase.dart';
 import 'package:flutter_litera/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter_litera/features/auth/domain/repositories/auth_repository.dart';
+import 'package:injectable/injectable.dart';
 
 class LoginParams extends Equatable {
   final String email;
@@ -14,6 +15,7 @@ class LoginParams extends Equatable {
   List<Object> get props => [email, password];
 }
 
+@lazySingleton
 class LoginUseCase implements UseCase<UserEntity, LoginParams> {
   final AuthRepository repository;
 

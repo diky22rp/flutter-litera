@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_litera/features/auth/presentation/pages/widgets/register_form.dart';
+import 'package:go_router/go_router.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -16,7 +17,7 @@ class RegisterPage extends StatelessWidget {
           state.maybeWhen(
             authenticated: (user, source) {
               if (source == AuthSource.register) {
-                Navigator.pop(context);
+                context.pushNamed('login');
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text("Registrasi Berhasil! Silakan Login."),

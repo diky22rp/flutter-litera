@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:flutter_litera/features/auth/presentation/pages/splash_page.dart';
+import 'package:flutter_litera/core/providers/global_providers.dart';
+import 'package:flutter_litera/core/routes/app_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'firebase_options.dart';
-import 'injection_container.dart' as di;
 import 'core/constants/app_colors.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'injection.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized;
+  WidgetsFlutterBinding.ensureInitialized();
 
   // Load .env
   await dotenv.load(fileName: ".env");
@@ -19,7 +20,10 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   //Init Service Locator
-  await di.init();
+  // await di.init();
+  await configureDependencies();
+
+  await initializeDateFormatting('id_ID', null);
 
   runApp(const LiteraApp());
 }
@@ -31,10 +35,11 @@ class LiteraApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => di.sl<AuthBloc>())],
-      child: MaterialApp(
-        title: dotenv.env['APP_NAME'],
+      providers: globalBlocProviders,
+      child: MaterialApp.router(
+        title: dotenv.env['APP_NAME'] ?? 'Litera',
         debugShowCheckedModeBanner: false,
+        routerConfig: AppRouter.router,
         theme: ThemeData(
           scaffoldBackgroundColor: AppColors.background,
           primaryColor: AppColors.primary,
@@ -56,7 +61,7 @@ class LiteraApp extends StatelessWidget {
 
           useMaterial3: true,
         ),
-        home: const SplashPage(),
+        // home: const SplashPage(),
       ),
     );
   }

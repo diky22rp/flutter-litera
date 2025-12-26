@@ -5,7 +5,9 @@ import 'package:flutter_litera/features/hub/data/datasources/hub_local_data_sour
 import 'package:flutter_litera/features/hub/data/datasources/hub_remote_data_source.dart';
 import 'package:flutter_litera/features/hub/domain/entities/hub_entity.dart';
 import 'package:flutter_litera/features/hub/domain/repositories/hub_repository.dart';
+import 'package:injectable/injectable.dart';
 
+@LazySingleton(as: HubRepository)
 class HubRepositoryImpl implements HubRepository {
   final HubRemoteDataSource remoteDataSource;
   final HubLocalDataSource localDataSource;
