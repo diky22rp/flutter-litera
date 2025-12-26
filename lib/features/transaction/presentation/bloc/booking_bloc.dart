@@ -27,58 +27,65 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   }) : super(const BookingState.initial()) {
     on<BookingEvent>((event, emit) async {
       await event.when(
-        rentBook: (book, durationInDays, totalPrice, paymentMethod) async {
-          emit(const BookingState.loading());
+        rentBook:
+            (book, durationInDays, totalPrice, paymentMethod, hubName) async {
+              emit(const BookingState.loading());
 
-          final user = firebaseAuth.currentUser;
-          if (user == null) {
-            emit(const BookingState.error("Silakan login terlebih dahulu."));
-            return;
-          }
-
-          final hubResult = await getSavedHubIdUseCase(NoParams());
-
-          await hubResult.fold(
-            (failure) async =>
-                emit(const BookingState.error("Gagal mengambil lokasi hub.")),
-            (hubId) async {
-              if (hubId == null) {
+              final user = firebaseAuth.currentUser;
+              if (user == null) {
                 emit(
-                  const BookingState.error("Pilih lokasi toko dulu di Home!"),
+                  const BookingState.error("Silakan login terlebih dahulu."),
                 );
                 return;
               }
 
-              final String newId =
-                  "TRX-${DateTime.now().millisecondsSinceEpoch}"; // ID Unik
-              final String pickupCode =
-                  _generatePickupCode(); // Kode Pickup #A1B2
+              final hubResult = await getSavedHubIdUseCase(NoParams());
 
-              final transaction = TransactionEntity(
-                id: newId,
-                userId: user.uid,
-                bookId: book.id,
-                bookTitle: book.title,
-                bookCover: book.coverUrl,
-                hubId: hubId,
-                duration: durationInDays,
-                totalPrice: totalPrice,
-                paymentMethod: paymentMethod,
-                status: 'waiting_pickup', // Status awal: Menunggu diambil
-                pickupCode: pickupCode,
-                orderDate: DateTime.now(),
-              );
+              await hubResult.fold(
+                (failure) async => emit(
+                  const BookingState.error("Gagal mengambil lokasi hub."),
+                ),
+                (hubId) async {
+                  if (hubId == null) {
+                    emit(
+                      const BookingState.error(
+                        "Pilih lokasi toko dulu di Home!",
+                      ),
+                    );
+                    return;
+                  }
 
-              // 4. Simpan ke Firebase
-              final result = await createTransactionUseCase(transaction);
+                  final String newId =
+                      "TRX-${DateTime.now().millisecondsSinceEpoch}"; // ID Unik
+                  final String pickupCode =
+                      _generatePickupCode(); // Kode Pickup #A1B2
 
-              result.fold(
-                (failure) => emit(BookingState.error(failure.message)),
-                (_) => emit(BookingState.success(pickupCode)),
+                  final transaction = TransactionEntity(
+                    id: newId,
+                    userId: user.uid,
+                    bookId: book.id,
+                    bookTitle: book.title,
+                    bookCover: book.coverUrl,
+                    hubId: hubId,
+                    hubName: hubName,
+                    duration: durationInDays,
+                    totalPrice: totalPrice,
+                    paymentMethod: paymentMethod,
+                    status: 'waiting_pickup', // Status awal: Menunggu diambil
+                    pickupCode: pickupCode,
+                    orderDate: DateTime.now(),
+                  );
+
+                  // 4. Simpan ke Firebase
+                  final result = await createTransactionUseCase(transaction);
+
+                  result.fold(
+                    (failure) => emit(BookingState.error(failure.message)),
+                    (_) => emit(BookingState.success(pickupCode)),
+                  );
+                },
               );
             },
-          );
-        },
       );
     });
   }

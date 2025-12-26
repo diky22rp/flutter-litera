@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BookingEvent {
 
- BookEntity get book; int get durationInDays; double get totalPrice; String get paymentMethod;
+ BookEntity get book; int get durationInDays; double get totalPrice; String get paymentMethod; String get hubName;
 /// Create a copy of BookingEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $BookingEventCopyWith<BookingEvent> get copyWith => _$BookingEventCopyWithImpl<B
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookingEvent&&(identical(other.book, book) || other.book == book)&&(identical(other.durationInDays, durationInDays) || other.durationInDays == durationInDays)&&(identical(other.totalPrice, totalPrice) || other.totalPrice == totalPrice)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookingEvent&&(identical(other.book, book) || other.book == book)&&(identical(other.durationInDays, durationInDays) || other.durationInDays == durationInDays)&&(identical(other.totalPrice, totalPrice) || other.totalPrice == totalPrice)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.hubName, hubName) || other.hubName == hubName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book,durationInDays,totalPrice,paymentMethod);
+int get hashCode => Object.hash(runtimeType,book,durationInDays,totalPrice,paymentMethod,hubName);
 
 @override
 String toString() {
-  return 'BookingEvent(book: $book, durationInDays: $durationInDays, totalPrice: $totalPrice, paymentMethod: $paymentMethod)';
+  return 'BookingEvent(book: $book, durationInDays: $durationInDays, totalPrice: $totalPrice, paymentMethod: $paymentMethod, hubName: $hubName)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $BookingEventCopyWith<$Res>  {
   factory $BookingEventCopyWith(BookingEvent value, $Res Function(BookingEvent) _then) = _$BookingEventCopyWithImpl;
 @useResult
 $Res call({
- BookEntity book, int durationInDays, double totalPrice, String paymentMethod
+ BookEntity book, int durationInDays, double totalPrice, String paymentMethod, String hubName
 });
 
 
@@ -62,12 +62,13 @@ class _$BookingEventCopyWithImpl<$Res>
 
 /// Create a copy of BookingEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? book = null,Object? durationInDays = null,Object? totalPrice = null,Object? paymentMethod = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? book = null,Object? durationInDays = null,Object? totalPrice = null,Object? paymentMethod = null,Object? hubName = null,}) {
   return _then(_self.copyWith(
 book: null == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
 as BookEntity,durationInDays: null == durationInDays ? _self.durationInDays : durationInDays // ignore: cast_nullable_to_non_nullable
 as int,totalPrice: null == totalPrice ? _self.totalPrice : totalPrice // ignore: cast_nullable_to_non_nullable
 as double,paymentMethod: null == paymentMethod ? _self.paymentMethod : paymentMethod // ignore: cast_nullable_to_non_nullable
+as String,hubName: null == hubName ? _self.hubName : hubName // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -153,10 +154,10 @@ return rentBook(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( BookEntity book,  int durationInDays,  double totalPrice,  String paymentMethod)?  rentBook,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( BookEntity book,  int durationInDays,  double totalPrice,  String paymentMethod,  String hubName)?  rentBook,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RentBook() when rentBook != null:
-return rentBook(_that.book,_that.durationInDays,_that.totalPrice,_that.paymentMethod);case _:
+return rentBook(_that.book,_that.durationInDays,_that.totalPrice,_that.paymentMethod,_that.hubName);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return rentBook(_that.book,_that.durationInDays,_that.totalPrice,_that.paymentMe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( BookEntity book,  int durationInDays,  double totalPrice,  String paymentMethod)  rentBook,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( BookEntity book,  int durationInDays,  double totalPrice,  String paymentMethod,  String hubName)  rentBook,}) {final _that = this;
 switch (_that) {
 case _RentBook():
-return rentBook(_that.book,_that.durationInDays,_that.totalPrice,_that.paymentMethod);case _:
+return rentBook(_that.book,_that.durationInDays,_that.totalPrice,_that.paymentMethod,_that.hubName);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +195,10 @@ return rentBook(_that.book,_that.durationInDays,_that.totalPrice,_that.paymentMe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( BookEntity book,  int durationInDays,  double totalPrice,  String paymentMethod)?  rentBook,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( BookEntity book,  int durationInDays,  double totalPrice,  String paymentMethod,  String hubName)?  rentBook,}) {final _that = this;
 switch (_that) {
 case _RentBook() when rentBook != null:
-return rentBook(_that.book,_that.durationInDays,_that.totalPrice,_that.paymentMethod);case _:
+return rentBook(_that.book,_that.durationInDays,_that.totalPrice,_that.paymentMethod,_that.hubName);case _:
   return null;
 
 }
@@ -209,13 +210,14 @@ return rentBook(_that.book,_that.durationInDays,_that.totalPrice,_that.paymentMe
 
 
 class _RentBook implements BookingEvent {
-  const _RentBook({required this.book, required this.durationInDays, required this.totalPrice, required this.paymentMethod});
+  const _RentBook({required this.book, required this.durationInDays, required this.totalPrice, required this.paymentMethod, required this.hubName});
   
 
 @override final  BookEntity book;
 @override final  int durationInDays;
 @override final  double totalPrice;
 @override final  String paymentMethod;
+@override final  String hubName;
 
 /// Create a copy of BookingEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +229,16 @@ _$RentBookCopyWith<_RentBook> get copyWith => __$RentBookCopyWithImpl<_RentBook>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RentBook&&(identical(other.book, book) || other.book == book)&&(identical(other.durationInDays, durationInDays) || other.durationInDays == durationInDays)&&(identical(other.totalPrice, totalPrice) || other.totalPrice == totalPrice)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RentBook&&(identical(other.book, book) || other.book == book)&&(identical(other.durationInDays, durationInDays) || other.durationInDays == durationInDays)&&(identical(other.totalPrice, totalPrice) || other.totalPrice == totalPrice)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.hubName, hubName) || other.hubName == hubName));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,book,durationInDays,totalPrice,paymentMethod);
+int get hashCode => Object.hash(runtimeType,book,durationInDays,totalPrice,paymentMethod,hubName);
 
 @override
 String toString() {
-  return 'BookingEvent.rentBook(book: $book, durationInDays: $durationInDays, totalPrice: $totalPrice, paymentMethod: $paymentMethod)';
+  return 'BookingEvent.rentBook(book: $book, durationInDays: $durationInDays, totalPrice: $totalPrice, paymentMethod: $paymentMethod, hubName: $hubName)';
 }
 
 
@@ -247,7 +249,7 @@ abstract mixin class _$RentBookCopyWith<$Res> implements $BookingEventCopyWith<$
   factory _$RentBookCopyWith(_RentBook value, $Res Function(_RentBook) _then) = __$RentBookCopyWithImpl;
 @override @useResult
 $Res call({
- BookEntity book, int durationInDays, double totalPrice, String paymentMethod
+ BookEntity book, int durationInDays, double totalPrice, String paymentMethod, String hubName
 });
 
 
@@ -264,12 +266,13 @@ class __$RentBookCopyWithImpl<$Res>
 
 /// Create a copy of BookingEvent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? book = null,Object? durationInDays = null,Object? totalPrice = null,Object? paymentMethod = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? book = null,Object? durationInDays = null,Object? totalPrice = null,Object? paymentMethod = null,Object? hubName = null,}) {
   return _then(_RentBook(
 book: null == book ? _self.book : book // ignore: cast_nullable_to_non_nullable
 as BookEntity,durationInDays: null == durationInDays ? _self.durationInDays : durationInDays // ignore: cast_nullable_to_non_nullable
 as int,totalPrice: null == totalPrice ? _self.totalPrice : totalPrice // ignore: cast_nullable_to_non_nullable
 as double,paymentMethod: null == paymentMethod ? _self.paymentMethod : paymentMethod // ignore: cast_nullable_to_non_nullable
+as String,hubName: null == hubName ? _self.hubName : hubName // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

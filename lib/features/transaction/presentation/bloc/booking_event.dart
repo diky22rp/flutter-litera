@@ -10,5 +10,6 @@ abstract class BookingEvent with _$BookingEvent {
     required int durationInDays,
     required double totalPrice,
     required String paymentMethod,
+    required String hubName,
   }) = _RentBook;
 }

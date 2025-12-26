@@ -122,7 +122,7 @@ class TransactionDetailPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "Lokasi Ambil: ${transaction.hubId}",
+                          "Lokasi Ambil: ${transaction.hubName}",
                           style: const TextStyle(
                             color: AppColors.primary,
                             fontSize: 12,

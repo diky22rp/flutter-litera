@@ -156,14 +156,20 @@ class _RentalOrderPageState extends State<RentalOrderPage> {
                   onPressed: isLoading
                       ? null
                       : () {
-                          // 🔥 KIRIM EVENT ORDER
+                          final hubState = context.read<HubBloc>().state;
+                          String currentHubName = "Lokasi Litera";
+
+                          hubState.whenOrNull(
+                            hubNameLoaded: (name) => currentHubName = name,
+                          );
+
                           context.read<BookingBloc>().add(
                             BookingEvent.rentBook(
                               book: widget.book,
                               durationInDays: _duration,
                               totalPrice: grandTotal,
-                              paymentMethod:
-                                  "CASH", // Default Cash dulu (Simple)
+                              paymentMethod: "CASH",
+                              hubName: currentHubName,
                             ),
                           );
                         },

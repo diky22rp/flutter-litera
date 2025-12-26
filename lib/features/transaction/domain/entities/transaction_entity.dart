@@ -11,6 +11,7 @@ abstract class TransactionEntity with _$TransactionEntity {
     required String bookTitle,
     required String bookCover,
     required String hubId,
+    required String hubName,
     required int duration,
     required double totalPrice,
     required String paymentMethod,

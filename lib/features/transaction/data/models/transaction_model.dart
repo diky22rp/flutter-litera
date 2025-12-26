@@ -9,6 +9,7 @@ class TransactionModel {
   final String bookTitle;
   final String bookCover;
   final String hubId;
+  final String hubName;
   final int duration;
   final double totalPrice;
   final String paymentMethod;
@@ -23,6 +24,7 @@ class TransactionModel {
     required this.bookTitle,
     required this.bookCover,
     required this.hubId,
+    required this.hubName,
     required this.duration,
     required this.totalPrice,
     required this.paymentMethod,
@@ -40,6 +42,7 @@ class TransactionModel {
       bookTitle: map['bookTitle'] ?? '',
       bookCover: map['bookCover'] ?? '',
       hubId: map['hubId'] ?? '',
+      hubName: map['hubName'] ?? 'Lokasi Tidak Diketahui',
       duration: (map['duration'] as num?)?.toInt() ?? 0,
       totalPrice: (map['totalPrice'] as num?)?.toDouble() ?? 0.0,
       paymentMethod: map['paymentMethod'] ?? 'CASH',
@@ -58,6 +61,7 @@ class TransactionModel {
       'bookTitle': bookTitle,
       'bookCover': bookCover,
       'hubId': hubId,
+      'hubName': hubName,
       'duration': duration,
       'totalPrice': totalPrice,
       'paymentMethod': paymentMethod,
@@ -77,6 +81,7 @@ class TransactionModel {
       bookTitle: entity.bookTitle,
       bookCover: entity.bookCover,
       hubId: entity.hubId,
+      hubName: entity.hubName,
       duration: entity.duration,
       totalPrice: entity.totalPrice,
       paymentMethod: entity.paymentMethod,
@@ -96,6 +101,7 @@ class TransactionModel {
       bookTitle: bookTitle,
       bookCover: bookCover,
       hubId: hubId,
+      hubName: hubName,
       duration: duration,
       totalPrice: totalPrice,
       paymentMethod: paymentMethod,
