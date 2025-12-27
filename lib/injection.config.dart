@@ -29,6 +29,10 @@ import 'features/book/data/datasources/book_remote_data_source.dart' as _i776;
 import 'features/book/data/repositories/book_repository_impl.dart' as _i253;
 import 'features/book/domain/repositories/book_repository.dart' as _i839;
 import 'features/book/domain/usecases/get_books_usecase.dart' as _i873;
+import 'features/book/domain/usecases/get_genres_usecase.dart' as _i917;
+import 'features/book/domain/usecases/search_books_usecase.dart' as _i1033;
+import 'features/book/presentation/bloc/genre/genre_cubit.dart' as _i944;
+import 'features/book/presentation/bloc/search/search_bloc.dart' as _i459;
 import 'features/home/presentation/bloc/home_bloc.dart' as _i123;
 import 'features/hub/data/datasources/hub_local_data_source.dart' as _i232;
 import 'features/hub/data/datasources/hub_remote_data_source.dart' as _i739;
@@ -110,8 +114,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i873.GetBooksUseCase>(
       () => _i873.GetBooksUseCase(gh<_i839.BookRepository>()),
     );
+    gh.lazySingleton<_i917.GetGenresUseCase>(
+      () => _i917.GetGenresUseCase(gh<_i839.BookRepository>()),
+    );
+    gh.lazySingleton<_i1033.SearchBooksUseCase>(
+      () => _i1033.SearchBooksUseCase(gh<_i839.BookRepository>()),
+    );
     gh.factory<_i123.HomeBloc>(
       () => _i123.HomeBloc(getBooksUseCase: gh<_i873.GetBooksUseCase>()),
+    );
+    gh.factory<_i459.SearchBloc>(
+      () => _i459.SearchBloc(gh<_i1033.SearchBooksUseCase>()),
+    );
+    gh.factory<_i944.GenreCubit>(
+      () => _i944.GenreCubit(gh<_i917.GetGenresUseCase>()),
     );
     gh.lazySingleton<_i74.HubRepository>(
       () => _i938.HubRepositoryImpl(

@@ -4,6 +4,7 @@ import 'package:flutter_litera/features/auth/presentation/pages/register_page.da
 import 'package:flutter_litera/features/auth/presentation/pages/splash_page.dart';
 import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
 import 'package:flutter_litera/features/book/presentation/pages/book_detail_page.dart';
+import 'package:flutter_litera/features/book/presentation/pages/search/search_page.dart';
 import 'package:flutter_litera/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_litera/features/hub/presentation/pages/hub_selection_page.dart';
 import 'package:flutter_litera/features/main/presentation/pages/main_page.dart';
@@ -88,7 +89,7 @@ class AppRouter {
           return MainPage(navigationShell: navigationShell);
         },
         branches: [
-          // 🏠 BRANCH 1: HOME
+          // MENU 1: HOME
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -96,20 +97,20 @@ class AppRouter {
                 name: 'home',
                 builder: (context, state) => const HomePage(),
                 routes: [
-                  // Detail Buku dll
+                  // Detail dll
                   // GoRoute(path: 'detail/:id', ...),
                 ],
               ),
             ],
           ),
 
-          // 🔍 BRANCH 2: SEARCH
+          // 🔍 MENU 2: SEARCH
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/search',
                 name: 'search',
-                builder: (context, state) => const ProfilePage(),
+                builder: (context, state) => const SearchPage(),
               ),
             ],
           ),

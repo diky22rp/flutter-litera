@@ -1,18 +1,17 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_litera/core/error/failures.dart';
 import 'package:flutter_litera/core/usecases/usecase.dart';
-import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
 import 'package:flutter_litera/features/book/domain/repositories/book_repository.dart';
 import 'package:injectable/injectable.dart';
 
 @lazySingleton
-class GetBooksUseCase implements UseCase<List<BookEntity>, NoParams> {
+class GetGenresUseCase implements UseCase<List<String>, NoParams> {
   final BookRepository repository;
 
-  GetBooksUseCase(this.repository);
+  GetGenresUseCase(this.repository);
 
   @override
-  Future<Either<Failure, List<BookEntity>>> call(NoParams params) async {
-    return await repository.getBooks(sort: 'newest', limit: 5);
+  Future<Either<Failure, List<String>>> call(NoParams params) async {
+    return await repository.getGenres();
   }
 }

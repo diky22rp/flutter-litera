@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart'; // Import Dio
 import 'package:flutter_litera/core/error/failures.dart';
 import 'package:flutter_litera/features/book/data/datasources/book_remote_data_source.dart';
 import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
@@ -13,15 +13,37 @@ class BookRepositoryImpl implements BookRepository {
   BookRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, List<BookEntity>>> getBooks() async {
+  Future<Either<Failure, List<BookEntity>>> getBooks({
+    String? keyword,
+    String? sort,
+    int? year,
+    String? genre,
+    int? page,
+    int? limit,
+  }) async {
     try {
-      final result = await remoteDataSource.getBooksFromApi();
+      final result = await remoteDataSource.getBooks(
+        keyword: keyword,
+        sort: sort,
+        year: year,
+        genre: genre,
+        page: page,
+        limit: limit,
+      );
+      return Right(result);
+    } on DioException catch (e) {
+      return Left(ServerFailure(e.message ?? "Gagal terhubung ke server"));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 
+  @override
+  Future<Either<Failure, List<String>>> getGenres() async {
+    try {
+      final result = await remoteDataSource.getGenres();
       return Right(result);
     } catch (e) {
-      if (e is DioException) {
-        return Left(ServerFailure("Masalah Koneksi: ${e.message}"));
-      }
       return Left(ServerFailure(e.toString()));
     }
   }
