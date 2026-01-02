@@ -135,6 +135,7 @@ class _BookDetailViewState extends State<_BookDetailView> {
                             ),
                           ),
                           const SizedBox(height: 8),
+
                           Text(
                             "Oleh ${widget.book.author}",
                             textAlign: TextAlign.center,
@@ -253,6 +254,55 @@ class _BookDetailViewState extends State<_BookDetailView> {
               ],
             ),
           ),
+
+          // ------------------------------------------------
+          // APP BAR
+          // ------------------------------------------------
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 4),
+                        ],
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                        onPressed: () => context.pop(),
+                      ),
+                    ),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(color: Colors.black12, blurRadius: 4),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
 
@@ -332,6 +382,7 @@ class _BookDetailViewState extends State<_BookDetailView> {
 
               const Spacer(),
 
+              // Buy Button
               OutlinedButton(
                 onPressed: _launchBuyUrl,
                 style: OutlinedButton.styleFrom(
@@ -360,6 +411,7 @@ class _BookDetailViewState extends State<_BookDetailView> {
               ),
               const SizedBox(width: 12),
 
+              // Rent Button
               ElevatedButton(
                 onPressed: () {
                   context.pushNamed('rental-order', extra: widget.book);
