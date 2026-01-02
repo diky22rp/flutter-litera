@@ -4,13 +4,13 @@ class UserModel {
   final String uid;
   final String email;
   final String name;
-  final int balance;
+  final String role;
 
   const UserModel({
     required this.uid,
     required this.email,
     required this.name,
-    required this.balance,
+    required this.role,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -18,16 +18,16 @@ class UserModel {
       uid: map['uid'] ?? '',
       email: map['email'] ?? '',
       name: map['name'] ?? '',
-      balance: (map['balance'] as num?)?.toInt() ?? 0,
+      role: map['role'] ?? '',
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {'uid': uid, 'email': email, 'name': name, 'balance': balance};
+    return {'uid': uid, 'email': email, 'name': name, 'role': role};
   }
 
   UserEntity toEntity() {
-    return UserEntity(uid: uid, email: email, name: name, balance: balance);
+    return UserEntity(uid: uid, email: email, name: name, role: role);
   }
 
   factory UserModel.fromEntity(UserEntity entity) {
@@ -35,7 +35,7 @@ class UserModel {
       uid: entity.uid,
       email: entity.email,
       name: entity.name,
-      balance: entity.balance,
+      role: entity.role,
     );
   }
 }

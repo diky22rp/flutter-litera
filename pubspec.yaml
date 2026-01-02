@@ -55,6 +55,7 @@ dependencies:
   injectable: ^2.7.1+4
   stream_transform: ^2.1.1
   bloc_concurrency: ^0.3.0
+  carousel_slider: ^5.1.1
 
 dev_dependencies:
   flutter_test:

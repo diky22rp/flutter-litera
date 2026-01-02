@@ -15,8 +15,11 @@ abstract class TransactionEntity with _$TransactionEntity {
     required int duration,
     required double totalPrice,
     required String paymentMethod,
-    required String status, // 'waiting_pickup', 'completed'
-    required String pickupCode, // Kode unik #A1B2
+    required String status,
+    required String pickupCode,
     required DateTime orderDate,
+    DateTime? pickupDate,
+    DateTime? actualReturnDate,
+    @Default(0) double lateFee,
   }) = _TransactionEntity;
 }

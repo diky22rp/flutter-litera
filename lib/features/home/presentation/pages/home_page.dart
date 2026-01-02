@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/features/book/presentation/bloc/banner/banner_cubit.dart';
 import 'package:flutter_litera/features/home/presentation/bloc/home_bloc.dart';
+import 'package:flutter_litera/features/home/presentation/pages/widgets/home_banner_section.dart';
 import 'package:flutter_litera/features/home/presentation/pages/widgets/location_section.dart';
 import 'package:flutter_litera/features/home/presentation/pages/widgets/new_book_section.dart';
 import 'package:flutter_litera/features/home/presentation/pages/widgets/search_bar_section.dart';
@@ -26,9 +28,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          sl<HomeBloc>()..add(const HomeEvent.fetchHomeBooks()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              sl<HomeBloc>()..add(const HomeEvent.fetchHomeBooks()),
+        ),
+        BlocProvider(create: (context) => sl<BannerCubit>()..loadBanners()),
+      ],
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: SafeArea(
@@ -45,6 +52,10 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 16),
 
                 SearchBarSection(),
+
+                const SizedBox(height: 24),
+
+                HomeBannerSection(),
 
                 const SizedBox(height: 24),
 

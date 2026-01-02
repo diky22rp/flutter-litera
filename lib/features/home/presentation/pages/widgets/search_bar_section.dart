@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:go_router/go_router.dart';
 
 class SearchBarSection extends StatelessWidget {
   const SearchBarSection({super.key});
@@ -10,6 +11,7 @@ class SearchBarSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
         onTap: () {
+          context.pushNamed("search");
           // Navigasi ke Search Page
           // Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchPage()));
         },

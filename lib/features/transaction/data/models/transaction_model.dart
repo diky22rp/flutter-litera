@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_litera/features/transaction/domain/entities/transaction_entity.dart';
 
-// 👇 TIDAK LAGI extends TransactionEntity
 class TransactionModel {
   final String id;
   final String userId;
@@ -17,6 +16,11 @@ class TransactionModel {
   final String pickupCode;
   final DateTime orderDate;
 
+  // 👇 FIELD BARU (Harus ada di Model juga)
+  final DateTime? pickupDate;
+  final DateTime? actualReturnDate;
+  final double lateFee;
+
   const TransactionModel({
     required this.id,
     required this.userId,
@@ -31,9 +35,11 @@ class TransactionModel {
     required this.status,
     required this.pickupCode,
     required this.orderDate,
+    this.pickupDate, // Nullable
+    this.actualReturnDate, // Nullable
+    this.lateFee = 0.0, // Default 0
   });
 
-  // 1. DARI FIRESTORE (Map) -> MODEL
   factory TransactionModel.fromMap(Map<String, dynamic> map) {
     return TransactionModel(
       id: map['id'] ?? '',
@@ -49,10 +55,17 @@ class TransactionModel {
       status: map['status'] ?? 'unknown',
       pickupCode: map['pickupCode'] ?? '',
       orderDate: (map['orderDate'] as Timestamp).toDate(),
+
+      pickupDate: map['pickupDate'] != null
+          ? (map['pickupDate'] as Timestamp).toDate()
+          : null,
+      actualReturnDate: map['actualReturnDate'] != null
+          ? (map['actualReturnDate'] as Timestamp).toDate()
+          : null,
+      lateFee: (map['lateFee'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
-  // 2. DARI MODEL -> FIRESTORE (Map)
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -68,11 +81,15 @@ class TransactionModel {
       'status': status,
       'pickupCode': pickupCode,
       'orderDate': Timestamp.fromDate(orderDate),
+
+      'pickupDate': pickupDate != null ? Timestamp.fromDate(pickupDate!) : null,
+      'actualReturnDate': actualReturnDate != null
+          ? Timestamp.fromDate(actualReturnDate!)
+          : null,
+      'lateFee': lateFee,
     };
   }
 
-  // 3. DARI ENTITY (Domain) -> MODEL (Data)
-  // Dipakai saat mau CREATE transaction (save ke DB)
   factory TransactionModel.fromEntity(TransactionEntity entity) {
     return TransactionModel(
       id: entity.id,
@@ -88,11 +105,13 @@ class TransactionModel {
       status: entity.status,
       pickupCode: entity.pickupCode,
       orderDate: entity.orderDate,
+
+      pickupDate: entity.pickupDate,
+      actualReturnDate: entity.actualReturnDate,
+      lateFee: entity.lateFee,
     );
   }
 
-  // 4. DARI MODEL (Data) -> ENTITY (Domain)
-  // Dipakai saat mau MENAMPILKAN data ke UI (Get Transactions)
   TransactionEntity toEntity() {
     return TransactionEntity(
       id: id,
@@ -108,6 +127,9 @@ class TransactionModel {
       status: status,
       pickupCode: pickupCode,
       orderDate: orderDate,
+      pickupDate: pickupDate,
+      actualReturnDate: actualReturnDate,
+      lateFee: lateFee,
     );
   }
 }

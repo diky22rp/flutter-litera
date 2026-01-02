@@ -56,9 +56,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
                   }
 
                   final String newId =
-                      "TRX-${DateTime.now().millisecondsSinceEpoch}"; // ID Unik
-                  final String pickupCode =
-                      _generatePickupCode(); // Kode Pickup #A1B2
+                      "TRX-${DateTime.now().millisecondsSinceEpoch}";
+                  final String pickupCode = _generatePickupCode();
 
                   final transaction = TransactionEntity(
                     id: newId,
@@ -71,12 +70,11 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
                     duration: durationInDays,
                     totalPrice: totalPrice,
                     paymentMethod: paymentMethod,
-                    status: 'waiting_pickup', // Status awal: Menunggu diambil
+                    status: 'waiting_pickup',
                     pickupCode: pickupCode,
                     orderDate: DateTime.now(),
                   );
 
-                  // 4. Simpan ke Firebase
                   final result = await createTransactionUseCase(transaction);
 
                   result.fold(

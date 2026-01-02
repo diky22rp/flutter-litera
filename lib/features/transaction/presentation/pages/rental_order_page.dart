@@ -5,6 +5,7 @@ import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
 import 'package:flutter_litera/features/hub/presentation/bloc/hub_bloc.dart';
+import 'package:flutter_litera/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter_litera/features/transaction/presentation/bloc/booking_bloc.dart';
 import 'package:flutter_litera/injection.dart';
 import 'package:go_router/go_router.dart';
@@ -21,21 +22,20 @@ class RentalOrderPage extends StatefulWidget {
 
 class _RentalOrderPageState extends State<RentalOrderPage> {
   int _duration = 3;
-  final double _price = 5000;
 
   @override
   Widget build(BuildContext context) {
-    double subtotal = (_price * _duration).toDouble();
-    double grandTotal = subtotal;
-
     final currencyFormat = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp ',
       decimalDigits: 0,
     );
 
-    return BlocProvider(
-      create: (context) => sl<BookingBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<BookingBloc>()),
+        BlocProvider(create: (context) => sl<SettingsCubit>()..loadSettings()),
+      ],
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
@@ -48,168 +48,213 @@ class _RentalOrderPageState extends State<RentalOrderPage> {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 1. CARD BUKU
-              _buildBookInfoCard(currencyFormat),
 
-              const SizedBox(height: 20),
+        body: BlocBuilder<SettingsCubit, SettingsState>(
+          builder: (context, settingsState) {
+            double currentPrice = 5000;
 
-              // 2. SLIDER DURASI
-              _buildDurationSlider(),
+            settingsState.maybeWhen(
+              loaded: (settings) {
+                currentPrice = settings.rentalPricePerDay.toDouble();
+              },
+              orElse: () {},
+            );
 
-              const SizedBox(height: 20),
+            double subtotal = currentPrice * _duration;
+            double grandTotal = subtotal;
 
-              // 3. LOKASI PENGAMBILAN (Ambil dari HubBloc)
-              const Text(
-                "Lokasi Pengambilan",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              _buildLocationCard(),
-
-              const SizedBox(height: 20),
-
-              // 4. RINCIAN PEMBAYARAN
-              const Text(
-                "Rincian Pembayaran",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
-                    _buildSummaryRow(
-                      "Sewa ($_duration hari)",
-                      subtotal,
-                      currencyFormat,
-                    ),
-
-                    const Divider(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        _buildBookInfoCard(currencyFormat, currentPrice),
+
+                        const SizedBox(height: 20),
+
+                        _buildDurationSlider(),
+
+                        const SizedBox(height: 20),
+
                         const Text(
-                          "Total",
+                          "Lokasi Pengambilan",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          currencyFormat.format(grandTotal),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                            fontSize: 16,
+                        const SizedBox(height: 8),
+                        _buildLocationCard(),
+
+                        const SizedBox(height: 20),
+
+                        const Text(
+                          "Rincian Pembayaran",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            children: [
+                              _buildSummaryRow(
+                                "Sewa ($_duration hari)",
+                                subtotal,
+                                currencyFormat,
+                              ),
+                              const Divider(height: 24),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Total",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    currencyFormat.format(grandTotal),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // 5. TOMBOL BAWAH
-        bottomNavigationBar: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                offset: Offset(0, -5),
-              ),
-            ],
-          ),
-          child: BlocConsumer<BookingBloc, BookingState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                success: (code) {
-                  context.goNamed('booking-success', extra: code);
-                },
-                error: (msg) {
-                  AppSnackbar.showError(context, msg);
-                },
-                orElse: () {},
-              );
-            },
-            builder: (context, state) {
-              final isLoading = state.maybeWhen(
-                loading: () => true,
-                orElse: () => false,
-              );
-
-              return SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () {
-                          final hubState = context.read<HubBloc>().state;
-                          String currentHubName = "Lokasi Litera";
-
-                          hubState.whenOrNull(
-                            hubNameLoaded: (name) => currentHubName = name,
-                          );
-
-                          context.read<BookingBloc>().add(
-                            BookingEvent.rentBook(
-                              book: widget.book,
-                              durationInDays: _duration,
-                              totalPrice: grandTotal,
-                              paymentMethod: "CASH",
-                              hubName: currentHubName,
-                            ),
-                          );
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
-                  child: isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              currencyFormat.format(grandTotal),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const Text(
-                              "Sewa Sekarang >",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
                 ),
-              );
-            },
-          ),
+
+                _buildBottomBar(
+                  context,
+                  grandTotal,
+                  currencyFormat,
+                  settingsState,
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  // WIDGET: SLIDER DURASI
+  Widget _buildBottomBar(
+    BuildContext context,
+    double grandTotal,
+    NumberFormat fmt,
+    SettingsState settingsState,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, -5),
+          ),
+        ],
+      ),
+      child: BlocConsumer<BookingBloc, BookingState>(
+        listener: (context, state) {
+          state.maybeWhen(
+            success: (code) {
+              context.goNamed('booking-success', extra: code);
+            },
+            error: (msg) => AppSnackbar.showError(context, msg),
+            orElse: () {},
+          );
+        },
+        builder: (context, state) {
+          final isBookingLoading = state.maybeWhen(
+            loading: () => true,
+            orElse: () => false,
+          );
+
+          final isSettingsLoading = settingsState.maybeWhen(
+            loading: () => true,
+            orElse: () => false,
+          );
+
+          final bool isButtonDisabled = isBookingLoading || isSettingsLoading;
+
+          return SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: isButtonDisabled
+                  ? null
+                  : () {
+                      final hubState = context.read<HubBloc>().state;
+                      String currentHubName = "Lokasi Litera";
+
+                      hubState.whenOrNull(
+                        hubNameLoaded: (name) => currentHubName = name,
+                      );
+
+                      context.read<BookingBloc>().add(
+                        BookingEvent.rentBook(
+                          book: widget.book,
+                          durationInDays: _duration,
+                          totalPrice: grandTotal,
+                          paymentMethod: "CASH",
+                          hubName: currentHubName,
+                        ),
+                      );
+                    },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: isButtonDisabled
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          fmt.format(grandTotal),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const Text(
+                          "Sewa Sekarang >",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildDurationSlider() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -244,9 +289,7 @@ class _RentalOrderPageState extends State<RentalOrderPage> {
             activeColor: AppColors.primary,
             label: "$_duration Hari",
             onChanged: (val) {
-              setState(() {
-                _duration = val.toInt();
-              });
+              setState(() => _duration = val.toInt());
             },
           ),
           const Row(
@@ -267,8 +310,7 @@ class _RentalOrderPageState extends State<RentalOrderPage> {
     );
   }
 
-  // WIDGET: INFO BUKU
-  Widget _buildBookInfoCard(NumberFormat fmt) {
+  Widget _buildBookInfoCard(NumberFormat fmt, double pricePerDay) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -318,7 +360,7 @@ class _RentalOrderPageState extends State<RentalOrderPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "${fmt.format(_price)} / hari",
+                  "${fmt.format(pricePerDay)} / hari",
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.success,

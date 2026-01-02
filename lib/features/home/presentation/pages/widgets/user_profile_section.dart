@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:flutter_litera/features/auth/presentation/pages/login_page.dart';
+import 'package:go_router/go_router.dart';
 
 class UserProfileSection extends StatelessWidget {
   const UserProfileSection({super.key});
@@ -26,7 +26,6 @@ class UserProfileSection extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Row(
         children: [
-          // A. AVATAR + PRO BADGE
           Stack(
             children: [
               Container(
@@ -45,7 +44,6 @@ class UserProfileSection extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          // B. TEKS SAPAAN
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               final greetingText = _getGreeting();
@@ -99,14 +97,9 @@ class UserProfileSection extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      GestureDetector(
+                      InkWell(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const LoginPage(),
-                            ),
-                          );
+                          context.goNamed('login');
                         },
                         child: Row(
                           children: [
@@ -134,26 +127,25 @@ class UserProfileSection extends StatelessWidget {
             },
           ),
 
-          // C. TOMBOL NOTIFIKASI
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.notifications_none_rounded,
-              color: AppColors.textMain,
-              size: 24,
-            ),
-          ),
+          // Container(
+          //   padding: const EdgeInsets.all(10),
+          //   decoration: BoxDecoration(
+          //     color: Colors.white,
+          //     shape: BoxShape.circle,
+          //     boxShadow: [
+          //       BoxShadow(
+          //         color: Colors.black.withValues(alpha: 0.05),
+          //         blurRadius: 10,
+          //         offset: const Offset(0, 4),
+          //       ),
+          //     ],
+          //   ),
+          //   child: const Icon(
+          //     Icons.notifications_none_rounded,
+          //     color: AppColors.textMain,
+          //     size: 24,
+          //   ),
+          // ),
         ],
       ),
     );

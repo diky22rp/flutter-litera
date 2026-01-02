@@ -5,6 +5,8 @@ import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
 import 'package:flutter_litera/features/home/presentation/bloc/home_bloc.dart';
+import 'package:flutter_litera/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:flutter_litera/injection.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -13,114 +15,114 @@ class NewBookSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Formatter Rupiah
     final currencyFormat = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp ',
       decimalDigits: 0,
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // ==========================================
-        // 1. HEADER SECTION
-        // ==========================================
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Buku Terbaru',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textMain,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  AppSnackbar.showInfo(context, "Testing.");
-                  // Navigasi ke Search Page (View All)
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (_) => const SearchPage()),
-                  // );
-                },
-                child: const Text(
-                  "Lihat Semua",
+    return BlocProvider(
+      create: (context) => sl<SettingsCubit>()..loadSettings(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Buku Terbaru',
                   style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.primary,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.textMain,
                   ),
                 ),
-              ),
-            ],
+                GestureDetector(
+                  onTap: () {
+                    AppSnackbar.showInfo(context, "Testing.");
+                  },
+                  child: const Text(
+                    "Lihat Semua",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
 
-        const SizedBox(height: 5),
+          const SizedBox(height: 5),
 
-        // ==========================================
-        // 2. BOOK LIST SECTION
-        // ==========================================
-        SizedBox(
-          height: 275,
-          child: BlocBuilder<HomeBloc, HomeState>(
-            builder: (context, state) {
-              return state.maybeWhen(
-                loading: () => const Center(child: CircularProgressIndicator()),
+          SizedBox(
+            height: 275,
+            child: BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (message) => Center(child: Text(message)),
+                  loaded: (books) {
+                    if (books.isEmpty) {
+                      return const Center(child: Text("Belum ada buku."));
+                    }
 
-                error: (message) => Center(child: Text(message)),
+                    final displayBooks = books.take(5).toList();
+                    final itemCount = displayBooks.length + 1;
 
-                loaded: (books) {
-                  if (books.isEmpty) {
-                    return const Center(child: Text("Belum ada buku."));
-                  }
+                    return BlocBuilder<SettingsCubit, SettingsState>(
+                      builder: (context, settingsState) {
+                        int currentRentPrice = 5000;
 
-                  final displayBooks = books.take(5).toList();
-                  final itemCount = displayBooks.length + 1;
+                        settingsState.maybeWhen(
+                          loaded: (settings) =>
+                              currentRentPrice = settings.rentalPricePerDay,
+                          orElse: () {},
+                        );
 
-                  return ListView.separated(
-                    padding: const EdgeInsets.all(20),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: itemCount,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(width: 16),
-                    itemBuilder: (context, index) {
-                      if (index == displayBooks.length) {
-                        return _buildViewAllCard(context);
-                      }
+                        return ListView.separated(
+                          padding: const EdgeInsets.all(20),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: itemCount,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: 16),
+                          itemBuilder: (context, index) {
+                            if (index == displayBooks.length) {
+                              return _buildViewAllCard(context);
+                            }
 
-                      final book = displayBooks[index];
-                      return _buildBookCard(context, book, currencyFormat);
-                    },
-                  );
-                },
-
-                // 4. STATE LAINNYA (Initial, dll)
-                orElse: () => const SizedBox(),
-              );
-            },
+                            final book = displayBooks[index];
+                            return _buildBookCard(
+                              context,
+                              book,
+                              currencyFormat,
+                              currentRentPrice,
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                  orElse: () => const SizedBox(),
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
-
-  // ==========================================
-  // WIDGET HELPER (Biar kodingan utama rapi)
-  // ==========================================
 
   Widget _buildBookCard(
     BuildContext context,
     BookEntity book,
     NumberFormat fmt,
+    int rentalPrice,
   ) {
-    double rentalPrice = 5000;
-
     return InkWell(
       onTap: () {
         context.pushNamed('book-detail', extra: book);
@@ -141,7 +143,6 @@ class NewBookSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar Cover
             Expanded(
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(
@@ -162,7 +163,6 @@ class NewBookSection extends StatelessWidget {
               ),
             ),
 
-            // Info Buku & Harga
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
@@ -186,7 +186,6 @@ class NewBookSection extends StatelessWidget {
                       color: AppColors.textGrey,
                     ),
                   ),
-
                   const SizedBox(height: 8),
 
                   Text(
@@ -198,7 +197,6 @@ class NewBookSection extends StatelessWidget {
                       decorationColor: AppColors.textGrey,
                     ),
                   ),
-
                   const SizedBox(height: 4),
 
                   Container(
@@ -230,13 +228,7 @@ class NewBookSection extends StatelessWidget {
 
   Widget _buildViewAllCard(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (_) => const SearchPage()),
-        // );
-        AppSnackbar.showInfo(context, "Testing.");
-      },
+      onTap: () => AppSnackbar.showInfo(context, "Testing."),
       child: Container(
         width: 160,
         decoration: BoxDecoration(

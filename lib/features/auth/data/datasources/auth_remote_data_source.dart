@@ -50,7 +50,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       uid: result.user!.uid,
       email: email,
       name: name,
-      balance: 0,
+      role: 'user',
     );
 
     await firestore.collection('users').doc(newUser.uid).set(newUser.toMap());

@@ -8,6 +8,6 @@ abstract class UserEntity with _$UserEntity {
     required String uid,
     required String email,
     required String name,
-    @Default(0) int balance,
+    required String role,
   }) = _UserEntity;
 }

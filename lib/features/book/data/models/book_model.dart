@@ -5,10 +5,13 @@ class BookModel extends BookEntity {
     required super.id,
     required super.title,
     required super.author,
+    required super.publisher,
+    required super.category,
     required super.summary,
     required super.coverUrl,
     required super.rating,
     required super.price,
+    required super.buyUrl,
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json) {
@@ -21,6 +24,12 @@ class BookModel extends BookEntity {
           ? json['author']['name'] ?? 'Unknown Author'
           : 'Unknown Author',
 
+      publisher: json['publisher'] ?? 'Unknown Publisher',
+
+      category: (json['category'] is Map<String, dynamic>)
+          ? json['category']['name'] ?? 'Unknown Category'
+          : 'Unknown Category',
+
       summary: json['summary'] ?? 'Tidak ada ringkasan.',
 
       coverUrl: json['cover_image'] ?? 'https://via.placeholder.com/150',
@@ -28,6 +37,11 @@ class BookModel extends BookEntity {
       rating: 4.5,
 
       price: _parsePrice(json['details']),
+
+      buyUrl:
+          (json['buy_links'] is List && (json['buy_links'] as List).isNotEmpty)
+          ? json['buy_links'][0]['url']
+          : null,
     );
   }
 

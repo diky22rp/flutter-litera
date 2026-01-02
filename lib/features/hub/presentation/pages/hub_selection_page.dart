@@ -127,7 +127,6 @@ class HubSelectionPage extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 16),
 
-                                          // Teks Info Hub
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
@@ -153,7 +152,6 @@ class HubSelectionPage extends StatelessWidget {
                                             ),
                                           ),
 
-                                          // Arrow Icon
                                           const Icon(
                                             Icons.arrow_forward_ios,
                                             size: 16,

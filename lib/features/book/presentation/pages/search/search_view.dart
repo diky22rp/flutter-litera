@@ -66,13 +66,12 @@ class _SearchViewState extends State<SearchView> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
+        // leading: const BackButton(color: Colors.black),
         title: const Text("Cari Buku", style: TextStyle(color: Colors.black)),
         centerTitle: true,
       ),
       body: Column(
         children: [
-          // 1. SEARCH BAR
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
@@ -94,13 +93,11 @@ class _SearchViewState extends State<SearchView> {
 
           const SizedBox(height: 12),
 
-          // 2. FILTER & SORT BAR
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                // TOMBOL SORT
                 ActionChip(
                   avatar: const Icon(Icons.sort, size: 16),
                   label: Text(_getSortLabel(_selectedSort)),
@@ -114,7 +111,6 @@ class _SearchViewState extends State<SearchView> {
                 ),
                 const SizedBox(width: 8),
 
-                // TOMBOL FILTER
                 ActionChip(
                   avatar: const Icon(Icons.filter_list, size: 16),
                   label: Text(
@@ -139,7 +135,6 @@ class _SearchViewState extends State<SearchView> {
 
           const SizedBox(height: 10),
 
-          // 3. GRID HASIL
           Expanded(
             child: BlocBuilder<SearchBloc, SearchState>(
               builder: (context, state) {

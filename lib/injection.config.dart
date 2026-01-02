@@ -17,6 +17,11 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import 'core/di/register_module.dart' as _i854;
+import 'features/admin/data/repositories/admin_rental_repository_impl.dart'
+    as _i251;
+import 'features/admin/domain/repositories/admin_rental_repository.dart'
+    as _i423;
+import 'features/admin/presentation/cubit/admin_transaction_cubit.dart' as _i17;
 import 'features/auth/data/datasources/auth_remote_data_source.dart' as _i767;
 import 'features/auth/data/repositories/auth_repository_impl.dart' as _i111;
 import 'features/auth/domain/repositories/auth_repository.dart' as _i1015;
@@ -25,12 +30,17 @@ import 'features/auth/domain/usecases/login_usecase.dart' as _i206;
 import 'features/auth/domain/usecases/logout_usecase.dart' as _i824;
 import 'features/auth/domain/usecases/register_usecase.dart' as _i693;
 import 'features/auth/presentation/bloc/auth_bloc.dart' as _i363;
+import 'features/book/data/datasources/banner_remote_data_source.dart' as _i30;
 import 'features/book/data/datasources/book_remote_data_source.dart' as _i776;
+import 'features/book/data/repositories/banner_repository_impl.dart' as _i566;
 import 'features/book/data/repositories/book_repository_impl.dart' as _i253;
+import 'features/book/domain/repositories/banner_repository.dart' as _i681;
 import 'features/book/domain/repositories/book_repository.dart' as _i839;
+import 'features/book/domain/usecases/get_banners_usecase.dart' as _i134;
 import 'features/book/domain/usecases/get_books_usecase.dart' as _i873;
 import 'features/book/domain/usecases/get_genres_usecase.dart' as _i917;
 import 'features/book/domain/usecases/search_books_usecase.dart' as _i1033;
+import 'features/book/presentation/bloc/banner/banner_cubit.dart' as _i635;
 import 'features/book/presentation/bloc/genre/genre_cubit.dart' as _i944;
 import 'features/book/presentation/bloc/search/search_bloc.dart' as _i459;
 import 'features/home/presentation/bloc/home_bloc.dart' as _i123;
@@ -43,6 +53,15 @@ import 'features/hub/domain/usecases/get_all_hubs_usecase.dart' as _i721;
 import 'features/hub/domain/usecases/get_cached_hub_name_usecase.dart' as _i812;
 import 'features/hub/domain/usecases/get_saved_hub_id_usecase.dart' as _i116;
 import 'features/hub/presentation/bloc/hub_bloc.dart' as _i138;
+import 'features/settings/data/datasources/settings_remote_data_source.dart'
+    as _i192;
+import 'features/settings/data/repositories/settings_repository_impl.dart'
+    as _i113;
+import 'features/settings/domain/repositories/settings_repository.dart'
+    as _i309;
+import 'features/settings/domain/usecases/get_settings_usecase.dart' as _i117;
+import 'features/settings/domain/usecases/update_price_usecase.dart' as _i294;
+import 'features/settings/presentation/cubit/settings_cubit.dart' as _i837;
 import 'features/transaction/data/datasources/transaction_remote_data_source.dart'
     as _i614;
 import 'features/transaction/data/repositories/transaction_repository_impl.dart'
@@ -72,6 +91,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i59.FirebaseAuth>(() => registerModule.firebaseAuth);
     gh.lazySingleton<_i974.FirebaseFirestore>(() => registerModule.firestore);
     gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
+    gh.lazySingleton<_i30.BannerRemoteDataSource>(
+      () => _i30.BannerRemoteDataSourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
+    gh.lazySingleton<_i681.BannerRepository>(
+      () => _i566.BannerRepositoryImpl(gh<_i30.BannerRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i423.AdminRentalRepository>(
+      () => _i251.AdminRentalRepositoryImpl(gh<_i974.FirebaseFirestore>()),
+    );
+    gh.lazySingleton<_i192.SettingsRemoteDataSource>(
+      () => _i192.SettingsRemoteDataSourceImpl(gh<_i974.FirebaseFirestore>()),
+    );
     gh.lazySingleton<_i232.HubLocalDataSource>(
       () => _i232.HubLocalDataSourceImpl(
         sharedPreferences: gh<_i460.SharedPreferences>(),
@@ -82,11 +113,17 @@ extension GetItInjectableX on _i174.GetIt {
         firestore: gh<_i974.FirebaseFirestore>(),
       ),
     );
+    gh.factory<_i17.AdminTransactionCubit>(
+      () => _i17.AdminTransactionCubit(gh<_i423.AdminRentalRepository>()),
+    );
     gh.lazySingleton<_i767.AuthRemoteDataSource>(
       () => _i767.AuthRemoteDataSourceImpl(
         firebaseAuth: gh<_i59.FirebaseAuth>(),
         firestore: gh<_i974.FirebaseFirestore>(),
       ),
+    );
+    gh.lazySingleton<_i134.GetBannersUseCase>(
+      () => _i134.GetBannersUseCase(gh<_i681.BannerRepository>()),
     );
     gh.lazySingleton<_i463.TransactionRepository>(
       () => _i16.TransactionRepositoryImpl(
@@ -111,6 +148,9 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDataSource: gh<_i776.BookRemoteDataSource>(),
       ),
     );
+    gh.lazySingleton<_i309.SettingsRepository>(
+      () => _i113.SettingsRepositoryImpl(gh<_i192.SettingsRemoteDataSource>()),
+    );
     gh.lazySingleton<_i873.GetBooksUseCase>(
       () => _i873.GetBooksUseCase(gh<_i839.BookRepository>()),
     );
@@ -134,6 +174,15 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDataSource: gh<_i739.HubRemoteDataSource>(),
         localDataSource: gh<_i232.HubLocalDataSource>(),
       ),
+    );
+    gh.lazySingleton<_i117.GetSettingsUseCase>(
+      () => _i117.GetSettingsUseCase(gh<_i309.SettingsRepository>()),
+    );
+    gh.lazySingleton<_i294.UpdatePriceUseCase>(
+      () => _i294.UpdatePriceUseCase(gh<_i309.SettingsRepository>()),
+    );
+    gh.factory<_i635.BannerCubit>(
+      () => _i635.BannerCubit(gh<_i134.GetBannersUseCase>()),
     );
     gh.lazySingleton<_i353.CacheHubIdUseCase>(
       () => _i353.CacheHubIdUseCase(gh<_i74.HubRepository>()),
@@ -167,6 +216,12 @@ extension GetItInjectableX on _i174.GetIt {
         createTransactionUseCase: gh<_i655.CreateTransactionUseCase>(),
         getSavedHubIdUseCase: gh<_i116.GetSavedHubIdUseCase>(),
         firebaseAuth: gh<_i59.FirebaseAuth>(),
+      ),
+    );
+    gh.factory<_i837.SettingsCubit>(
+      () => _i837.SettingsCubit(
+        gh<_i117.GetSettingsUseCase>(),
+        gh<_i294.UpdatePriceUseCase>(),
       ),
     );
     gh.factory<_i363.AuthBloc>(

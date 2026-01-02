@@ -20,7 +20,12 @@ class LoginPage extends StatelessWidget {
                   context,
                   "Berhasil masuk! Selamat datang, ${user.name}.",
                 );
-                context.goNamed('hub-selection');
+
+                if (user.role == 'admin') {
+                  context.goNamed('admin');
+                } else {
+                  context.goNamed('hub-selection');
+                }
               }
             },
             error: (message) => AppSnackbar.showError(context, message),
