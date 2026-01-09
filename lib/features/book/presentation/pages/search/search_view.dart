@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
 import 'package:flutter_litera/features/book/presentation/bloc/genre/genre_cubit.dart';
 import 'package:flutter_litera/features/book/presentation/bloc/search/search_bloc.dart';
@@ -138,67 +139,44 @@ class _SearchViewState extends State<SearchView> {
           Expanded(
             child: BlocBuilder<SearchBloc, SearchState>(
               builder: (context, state) {
-                if (state.status == SearchStatus.initial) {
-                  return const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search, size: 60, color: Colors.grey),
-                        SizedBox(height: 10),
-                        Text("Cari buku favoritmu..."),
-                      ],
-                    ),
-                  );
-                }
-
                 if (state.status == SearchStatus.loading &&
                     state.books.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: LiteraLoading(isOverlay: false));
                 }
 
-                if (state.status == SearchStatus.success &&
-                    state.books.isEmpty) {
-                  return const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search_off, size: 60, color: Colors.grey),
-                        SizedBox(height: 10),
-                        Text("Buku tidak ditemukan"),
-                      ],
-                    ),
-                  );
-                }
-
-                if (state.status == SearchStatus.failure &&
-                    state.books.isEmpty) {
-                  return Center(child: Text(state.errorMessage ?? "Error"));
-                }
-
-                return GridView.builder(
+                return CustomScrollView(
                   controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.65,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                  ),
-                  itemCount: state.hasReachedMax
-                      ? state.books.length
-                      : state.books.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index >= state.books.length) {
-                      return const Center(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.all(16),
+                      sliver: SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.65,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                            ),
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          return _buildBookItem(state.books[index]);
+                        }, childCount: state.books.length),
+                      ),
+                    ),
+
+                    if (!state.hasReachedMax)
+                      SliverToBoxAdapter(
                         child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: const Center(
+                            child: LiteraLoading(isOverlay: false),
+                          ),
                         ),
-                      );
-                    }
-                    final book = state.books[index];
-                    return _buildBookItem(book);
-                  },
+                      ),
+
+                    if (state.hasReachedMax)
+                      const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  ],
                 );
               },
             ),

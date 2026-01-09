@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_litera/features/auth/presentation/pages/widgets/login_form.dart';
@@ -8,9 +9,12 @@ import 'package:go_router/go_router.dart';
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
+  static const Color riveBgColor = Color(0xFFD6E2EA);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: riveBgColor,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           state.maybeWhen(
@@ -34,17 +38,18 @@ class LoginPage extends StatelessWidget {
         },
         child: Stack(
           children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: const LoginForm(),
+            Center(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(24),
+                child: const LoginForm(),
+              ),
             ),
+
             BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
                 return state.maybeWhen(
-                  loading: () => Container(
-                    color: Colors.black38,
-                    child: const Center(child: CircularProgressIndicator()),
-                  ),
+                  loading: () => const LiteraLoading(),
                   orElse: () => const SizedBox.shrink(),
                 );
               },

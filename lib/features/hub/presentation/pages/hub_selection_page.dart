@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/injection.dart';
 import 'package:go_router/go_router.dart'; // 👈 Import GoRouter
 import 'package:flutter_litera/core/constants/app_colors.dart';
@@ -62,8 +63,7 @@ class HubSelectionPage extends StatelessWidget {
                   child: BlocBuilder<HubBloc, HubState>(
                     builder: (context, state) {
                       return state.maybeWhen(
-                        loading: () =>
-                            const Center(child: CircularProgressIndicator()),
+                        loading: () => const LiteraLoading(),
 
                         error: (message) => Center(child: Text(message)),
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/core/presentation/widgets/transaction_item_card.dart';
 import 'package:flutter_litera/core/presentation/widgets/transaction_payment_summary.dart';
 import 'package:flutter_litera/features/admin/presentation/cubit/admin_transaction_cubit.dart';
@@ -267,7 +268,7 @@ class _AdminHubViewState extends State<_AdminHubView> {
                 },
                 builder: (context, state) {
                   if (state is AdminTxLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const LiteraLoading();
                   }
 
                   if (state is AdminTxFound) {

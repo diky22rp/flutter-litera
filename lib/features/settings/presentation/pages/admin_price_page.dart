@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:flutter_litera/injection.dart'; // Buat sl<>
 
@@ -62,7 +63,7 @@ class _AdminPriceViewState extends State<_AdminPriceView> {
         },
         builder: (context, state) {
           if (state == const SettingsState.loading()) {
-            return const Center(child: CircularProgressIndicator());
+            return const LiteraLoading(isOverlay: false);
           }
 
           return Padding(
