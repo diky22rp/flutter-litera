@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -70,7 +71,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const LiteraLoading(isOverlay: false),
 
               orElse: () => const Center(child: Text("User belum login")),
             );

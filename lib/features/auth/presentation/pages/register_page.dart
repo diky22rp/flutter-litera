@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_litera/features/auth/presentation/pages/widgets/register_form.dart';
 import 'package:go_router/go_router.dart';
@@ -46,7 +47,7 @@ class RegisterPage extends StatelessWidget {
                 return state.maybeWhen(
                   loading: () => Container(
                     color: Colors.black38,
-                    child: const Center(child: CircularProgressIndicator()),
+                    child: const LiteraLoading(),
                   ),
                   orElse: () => const SizedBox.shrink(),
                 );

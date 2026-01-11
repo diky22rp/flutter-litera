@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/core/presentation/widgets/transaction_item_card.dart'; // Import Widget Global
 import 'package:flutter_litera/features/transaction/presentation/bloc/history/bloc/history_bloc.dart';
 import 'package:flutter_litera/injection.dart';
@@ -28,7 +29,7 @@ class HistoryPage extends StatelessWidget {
         body: BlocBuilder<HistoryBloc, HistoryState>(
           builder: (context, state) {
             return state.maybeWhen(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const LiteraLoading(isOverlay: false),
 
               error: (msg) => Center(child: Text(msg)),
 

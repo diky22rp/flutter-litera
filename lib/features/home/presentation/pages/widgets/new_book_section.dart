@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/book/domain/entities/book_entity.dart';
 import 'package:flutter_litera/features/home/presentation/bloc/home_bloc.dart';
@@ -63,8 +64,7 @@ class NewBookSection extends StatelessWidget {
             child: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
                 return state.maybeWhen(
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                  loading: () => const LiteraLoading(isOverlay: false),
                   error: (message) => Center(child: Text(message)),
                   loaded: (books) {
                     if (books.isEmpty) {

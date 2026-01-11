@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
+import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/features/book/domain/entities/banner_entity.dart';
 import 'package:flutter_litera/features/book/presentation/bloc/banner/banner_cubit.dart';
 import 'package:go_router/go_router.dart';
@@ -50,9 +51,7 @@ class _HomeBannerSectionState extends State<HomeBannerSection> {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            ),
+            child: const LiteraLoading(isOverlay: false),
           ),
 
           error: (message) => const SizedBox.shrink(),
