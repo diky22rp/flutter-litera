@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_litera/core/presentation/widgets/litera_loading.dart';
 import 'package:flutter_litera/injection.dart';
-import 'package:go_router/go_router.dart'; // 👈 Import GoRouter
+import 'package:go_router/go_router.dart';
 import 'package:flutter_litera/core/constants/app_colors.dart';
 import 'package:flutter_litera/core/utils/app_snackbar.dart';
 import 'package:flutter_litera/features/hub/presentation/bloc/hub_bloc.dart';
@@ -63,7 +63,7 @@ class HubSelectionPage extends StatelessWidget {
                   child: BlocBuilder<HubBloc, HubState>(
                     builder: (context, state) {
                       return state.maybeWhen(
-                        loading: () => const LiteraLoading(),
+                        loading: () => LiteraLoading(isOverlay: false),
 
                         error: (message) => Center(child: Text(message)),
 

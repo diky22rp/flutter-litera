@@ -51,7 +51,7 @@ class _HomeBannerSectionState extends State<HomeBannerSection> {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const LiteraLoading(),
+            child: const LiteraLoading(isOverlay: false),
           ),
 
           error: (message) => const SizedBox.shrink(),

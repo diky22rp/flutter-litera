@@ -64,7 +64,7 @@ class NewBookSection extends StatelessWidget {
             child: BlocBuilder<HomeBloc, HomeState>(
               builder: (context, state) {
                 return state.maybeWhen(
-                  loading: () => const LiteraLoading(),
+                  loading: () => const LiteraLoading(isOverlay: false),
                   error: (message) => Center(child: Text(message)),
                   loaded: (books) {
                     if (books.isEmpty) {
