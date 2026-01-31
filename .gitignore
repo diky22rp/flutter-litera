@@ -46,7 +46,7 @@ app.*.map.json
 
 # Dotenv
 # Firebase & Environment Config
-.env
+# .env
 # android/app/google-services.json
 # ios/Runner/GoogleService-Info.plist
 # lib/firebase_options.dart
