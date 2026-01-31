@@ -72,6 +72,7 @@ dev_dependencies:
   freezed: ^3.2.3
   json_serializable: ^6.11.2
   injectable_generator: ^2.9.1
+  mocktail: ^1.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -41,14 +41,24 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
     if (limit != null) queryParams['limit'] = limit;
 
     dev.log(
-      'GET Books - URL: ${ApiConstants.getBooks}',
+      'GET Books - URL: \\${ApiConstants.getBooks}',
       name: 'BookRemoteDataSource',
     );
-    dev.log('Query Params: $queryParams', name: 'BookRemoteDataSource');
+    dev.log('Query Params: \\$queryParams', name: 'BookRemoteDataSource');
 
     final response = await dio.get(
       ApiConstants.getBooks,
       queryParameters: queryParams,
+    );
+
+    // Tambahan debug untuk response API
+    dev.log(
+      'API Response Status: \\${response.statusCode}',
+      name: 'BookRemoteDataSource',
+    );
+    dev.log(
+      'API Response Data: \\${response.data}',
+      name: 'BookRemoteDataSource',
     );
 
     if (response.statusCode == 200) {
@@ -56,7 +66,12 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
 
       if (data != null) {
         dev.log(
-          'Successfully fetched ${data.length} books',
+          'Successfully fetched \\${data.length} books',
+          name: 'BookRemoteDataSource',
+        );
+        // Debug tambahan untuk data buku
+        dev.log(
+          'Books Data: \\${data.map((e) => e.toString()).toList()}',
           name: 'BookRemoteDataSource',
         );
         return data
@@ -67,7 +82,7 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
       return [];
     } else {
       dev.log(
-        'Failed to fetch books. Status: ${response.statusCode}',
+        'Failed to fetch books. Status: \\${response.statusCode}',
         name: 'BookRemoteDataSource',
         error: response.data,
       );
@@ -75,7 +90,7 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
         requestOptions: response.requestOptions,
         response: response,
         type: DioExceptionType.badResponse,
-        error: 'Status code: ${response.statusCode}',
+        error: 'Status code: \\${response.statusCode}',
       );
     }
   }
@@ -84,7 +99,17 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
   Future<List<String>> getGenres() async {
     dev.log('Fetching Genres...', name: 'BookRemoteDataSource');
     try {
-      final response = await dio.get('${ApiConstants.baseUrl}/stats/genre');
+      final response = await dio.get('\\${ApiConstants.baseUrl}/stats/genre');
+
+      // Tambahan debug untuk response API genre
+      dev.log(
+        'API Genre Response Status: \\${response.statusCode}',
+        name: 'BookRemoteDataSource',
+      );
+      dev.log(
+        'API Genre Response Data: \\${response.data}',
+        name: 'BookRemoteDataSource',
+      );
 
       if (response.statusCode == 200) {
         final List? rawList = response.data['genre_statistics'];
@@ -93,14 +118,19 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
           final List<String> genres = rawList
               .map((item) => item['genre'] as String?)
               .where((g) => g != null)
-              .map((g) => g!.replaceAll(RegExp(r'[,\s]+$'), ''))
+              .map((g) => g!.replaceAll(RegExp(r'[\,\s]+$'), ''))
               .toSet()
               .toList();
 
           genres.sort();
 
           dev.log(
-            'Successfully fetched ${genres.length} genres',
+            'Successfully fetched \\${genres.length} genres',
+            name: 'BookRemoteDataSource',
+          );
+          // Debug tambahan untuk data genre
+          dev.log(
+            'Genres Data: \\${genres.toString()}',
             name: 'BookRemoteDataSource',
           );
           return genres;
@@ -109,7 +139,7 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
         return [];
       } else {
         dev.log(
-          'Failed to fetch genres. Status: ${response.statusCode}',
+          'Failed to fetch genres. Status: \\${response.statusCode}',
           name: 'BookRemoteDataSource',
         );
         throw DioException(
