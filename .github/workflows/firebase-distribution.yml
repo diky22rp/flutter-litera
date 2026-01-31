@@ -14,7 +14,10 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          channel: 'stable'
+          cache: true       # Opsional: Agar build berikutnya lebih cepat
+          # Baris 'flutter-version' DIHAPUS agar otomatis ambil versi terbaru
+      # -----------------------------
 
       - name: Install dependencies
         run: flutter pub get
