@@ -26,6 +26,9 @@ class _LiteraLoadingState extends State<LiteraLoading>
     "Just a second...",
     "Bringing stories to life...",
     "Dusting the bookshelves...",
+    "Turning the page...",
+    "Finding your next read...",
+    "Organizing tales...",
   ];
 
   @override
